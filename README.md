@@ -12,14 +12,16 @@ A music guessing game where teams build timelines by placing songs in chronologi
 
 ## 🎵 Song Library
 
-The game includes 35 curated iconic songs from 1960-2025:
-- 1960s: The Beatles, Bob Dylan, Aretha Franklin, The Beach Boys
-- 1970s: Queen, Led Zeppelin, Eagles, Bee Gees, John Lennon
-- 1980s: Michael Jackson, Guns N' Roses, Madonna, The Police
-- 1990s: Nirvana, Oasis, Spice Girls, TLC, Britney Spears
-- 2000s: Beyoncé, OutKast, Amy Winehouse, Rihanna, The Killers
-- 2010s: Adele, Bruno Mars, Pharrell, Ed Sheeran, Billie Eilish
-- 2020s: The Weeknd, Dua Lipa, Olivia Rodrigo, Taylor Swift, Miley Cyrus
+The game includes **251 curated songs** (125 English, 126 Spanish/Latin):
+
+**English Songs:**
+- 1960s-1990s: Classic hits from The Beatles, Queen, Michael Jackson, Nirvana
+- 2000s-2020s: Modern anthems from Beyoncé, Ed Sheeran, The Weeknd, Billie Eilish
+
+**Spanish/Latin Songs:**
+- Heavy emphasis on reggaeton and Latin pop
+- Artists: Bad Bunny, Karol G, Ozuna, Rauw Alejandro, Maluma, ROSALÍA, Shakira
+- Focus on post-2000 music with 66 songs from 2020s alone
 
 ## 🚀 Getting Started
 
@@ -53,11 +55,34 @@ npm run dev
 
 ## 🎨 Customization
 
-To add more songs, edit `src/data/songs.js`:
+### Adding New Songs
+
+To add songs, edit `src/data/songs.js` and add entries **without YouTube IDs**:
 
 ```javascript
 {
-  id: 36,
+  id: 252,
+  title: "Your Song Title",
+  artist: "Artist Name",
+  year: 2024
+}
+```
+
+Then run the automatic YouTube ID updater:
+
+```bash
+python3 update-youtube-ids.py
+```
+
+The script will automatically fetch the correct YouTube ID from YouTube Music and update the file. See `YOUTUBE_ID_UPDATER_README.md` for details.
+
+### Manual YouTube ID Entry
+
+You can also add songs with YouTube IDs directly:
+
+```javascript
+{
+  id: 252,
   title: "Your Song Title",
   artist: "Artist Name",
   year: 2024,
