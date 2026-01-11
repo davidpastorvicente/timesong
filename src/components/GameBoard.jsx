@@ -1,9 +1,21 @@
 import { useState, useEffect, useCallback } from 'react';
-import { songsWithPreview } from '../data/songs';
+import { songs } from '../data/songs';
 import Timeline from './Timeline';
 import SongPlayer from './SongPlayer';
 import PlacementButtons from './PlacementButtons';
 import './GameBoard.css';
+
+// Function to fetch Deezer preview URL dynamically
+async function fetchDeezerPreview(deezerId) {
+  try {
+    const response = await fetch(`https://api.deezer.com/track/${deezerId}`);
+    const data = await response.json();
+    return data.preview || null;
+  } catch (error) {
+    console.error('Error fetching Deezer preview:', error);
+    return null;
+  }
+}
 
 export default function GameBoard({ teams, winningScore }) {
   const [currentTeamIndex, setCurrentTeamIndex] = useState(0);
@@ -18,7 +30,7 @@ export default function GameBoard({ teams, winningScore }) {
   const [scores, setScores] = useState(teams.map(() => 0));
   const [winner, setWinner] = useState(null);
 
-  const drawNewSong = useCallback((songs, usedIds) => {
+  const drawNewSong = useCallback(async (songs, usedIds) => {
     const availableToPlay = songs.filter(song => !usedIds.includes(song.youtubeId));
 
     if (availableToPlay.length === 0) {
@@ -29,15 +41,26 @@ export default function GameBoard({ teams, winningScore }) {
     const randomIndex = Math.floor(Math.random() * availableToPlay.length);
     const song = availableToPlay[randomIndex];
 
-    setCurrentSong(song);
+    // Fetch Deezer preview dynamically if deezerId exists
+    let previewUrl;
+    if (song.deezerId) {
+      previewUrl = await fetchDeezerPreview(song.deezerId);
+    }
+    
+    // Fallback to YouTube if no Deezer preview available
+    if (!previewUrl) {
+      previewUrl = `https://www.youtube.com/embed/${song.youtubeId}?autoplay=1&controls=0`;
+    }
+
+    setCurrentSong({ ...song, previewUrl });
     setUsedSongIds([...usedIds, song.youtubeId]);
     setGamePhase('playing');
     setLastPlacement(null);
   }, []);
 
   const loadSongs = useCallback(async () => {
-    setAvailableSongs(songsWithPreview);
-    drawNewSong(songsWithPreview, []);
+    setAvailableSongs(songs);
+    await drawNewSong(songs, []);
   }, [drawNewSong]);
 
   useEffect(() => {
@@ -85,10 +108,10 @@ export default function GameBoard({ teams, winningScore }) {
     return true;
   };
 
-  const handleNextTurn = () => {
+  const handleNextTurn = async () => {
     const nextTeamIndex = (currentTeamIndex + 1) % teams.length;
     setCurrentTeamIndex(nextTeamIndex);
-    drawNewSong(availableSongs, usedSongIds);
+    await drawNewSong(availableSongs, usedSongIds);
   };
 
   const currentTeam = teams[currentTeamIndex];
