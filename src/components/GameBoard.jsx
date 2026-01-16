@@ -9,7 +9,7 @@ import './GameBoard.css';
 // Function to fetch Deezer preview URL dynamically
 async function fetchDeezerPreview(deezerId) {
   try {
-    const response = await fetch(`https://api.deezer.com/track/${deezerId}`);
+    const response = await fetch(`https://corsproxy.io/?${encodeURIComponent(`https://api.deezer.com/track/${deezerId}`)}`);
     const data = await response.json();
     return data.preview || null;
   } catch (error) {
