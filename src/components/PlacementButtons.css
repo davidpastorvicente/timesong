@@ -7,7 +7,7 @@
   font-weight: bold;
   font-size: 1.1rem;
   margin-bottom: 1rem;
-  color: white;
+  color: var(--text-primary);
 }
 
 .button-grid {
@@ -20,57 +20,62 @@
 
 .placement-button {
   padding: 1rem 1.5rem;
-  border: 2px solid #0f3460;
-  background: white;
+  border: 2px solid transparent;
+  background: var(--bg-primary);
   border-radius: 8px;
   cursor: pointer;
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600;
   transition: all 0.2s;
-  color: #0f3460;
+  box-shadow: 0 2px 4px var(--shadow);
 }
 
 .placement-button:hover {
-  background: #0f3460;
-  color: white;
-  transform: translateX(5px);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px var(--shadow-lg);
 }
 
 .placement-button.first {
-  background: #0f3460;
+  background: var(--primary);
   color: white;
+  border-color: var(--primary);
 }
 
 .placement-button.first:hover {
-  background: #16213e;
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
 }
 
 .placement-button.before {
-  border-color: #e94560;
-  color: #e94560;
+  background: var(--warning);
+  color: var(--dark);
+  border-color: var(--warning);
 }
 
 .placement-button.before:hover {
-  background: #e94560;
-  color: white;
+  background: var(--warning-dark);
+  border-color: var(--warning-dark);
 }
 
 .placement-button.between {
-  border-color: #ffa500;
-  color: #ffa500;
+  background: var(--info);
+  color: var(--dark);
+  border-color: var(--info);
 }
 
 .placement-button.between:hover {
-  background: #ffa500;
-  color: white;
+  background: #0aa2c0;
+  border-color: #0aa2c0;
 }
 
 .placement-button.after {
-  border-color: #06d6a0;
-  color: #06d6a0;
+  background: var(--success);
+  color: white;
+  border-color: var(--success);
 }
 
 .placement-button.after:hover {
-  background: #06d6a0;
-  color: white;
+  background: var(--success-dark);
+  border-color: var(--success-dark);
 }
+

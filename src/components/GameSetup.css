@@ -7,7 +7,7 @@
 .game-setup h1 {
   font-size: 3rem;
   margin-bottom: 0.5rem;
-  color: #e94560;
+  color: var(--primary);
 }
 
 @media (max-width: 767px) {
@@ -18,17 +18,17 @@
 
 .subtitle {
   font-size: 1.2rem;
-  color: #f0f0f0;
+  color: var(--text-secondary);
   margin-bottom: 2rem;
   font-weight: 500;
 }
 
 .setup-form {
   margin: auto;
-  background: white;
+  background: var(--bg-primary);
   padding: 2rem;
   border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px var(--shadow);
   max-width: 500px;
 }
 
@@ -41,6 +41,7 @@
   font-weight: bold;
   margin-bottom: 1rem;
   font-size: 1.1rem;
+  color: var(--text-primary);
 }
 
 .team-selector {
@@ -52,8 +53,9 @@
 
 .team-selector button {
   padding: 0.5rem 1rem;
-  border: 2px solid #ddd;
-  background: white;
+  border: 2px solid var(--border-color);
+  background: var(--bg-primary);
+  color: var(--text-primary);
   border-radius: 8px;
   cursor: pointer;
   font-size: 1rem;
@@ -61,13 +63,14 @@
 }
 
 .team-selector button:hover {
-  border-color: #e94560;
+  border-color: var(--primary);
+  background: var(--bg-secondary);
 }
 
 .team-selector button.active {
-  background: #e94560;
+  background: var(--primary);
   color: white;
-  border-color: #e94560;
+  border-color: var(--primary);
 }
 
 .team-names {
@@ -80,7 +83,9 @@
 .team-names input {
   padding: 0.75rem;
   width: 250px;
-  border: 2px solid #ddd;
+  border: 2px solid var(--border-color);
+  background: var(--bg-primary);
+  color: var(--text-primary);
   border-radius: 8px;
   font-size: 1rem;
   transition: border-color 0.2s;
@@ -88,12 +93,12 @@
 
 .team-names input:focus {
   outline: none;
-  border-color: #e94560;
+  border-color: var(--primary);
 }
 
 .start-button {
   padding: 1rem 3rem;
-  background: linear-gradient(135deg, #e94560 0%, #0f3460 100%);
+  background: var(--primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -101,10 +106,11 @@
   font-weight: bold;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 4px 15px rgba(233, 69, 96, 0.3);
+  box-shadow: 0 4px 15px var(--shadow-lg);
 }
 
 .start-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(233, 69, 96, 0.4);
+  background: var(--primary-dark);
+  box-shadow: 0 6px 20px var(--shadow-lg);
 }

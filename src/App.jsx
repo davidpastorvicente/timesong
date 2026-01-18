@@ -2,6 +2,7 @@ import { useState } from 'react'
 import GameSetup from './components/GameSetup'
 import GameBoard from './components/GameBoard'
 import LanguageSelector from './components/LanguageSelector'
+import ThemeToggle from './components/ThemeToggle'
 import './App.css'
 
 function App() {
@@ -20,7 +21,10 @@ function App() {
 
   return (
     <div className="app">
-      <LanguageSelector currentLanguage={language} onLanguageChange={setLanguage} />
+      <div className="top-controls">
+        <LanguageSelector currentLanguage={language} onLanguageChange={setLanguage} />
+        <ThemeToggle />
+      </div>
       {!gameStarted ? (
         <GameSetup onStartGame={handleStartGame} language={language} />
       ) : (

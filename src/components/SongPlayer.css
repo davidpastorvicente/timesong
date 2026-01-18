@@ -1,8 +1,8 @@
 .song-player {
-  background: white;
+  background: var(--bg-primary);
   padding: 1.5rem;
   border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px var(--shadow);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -18,7 +18,7 @@
 
 .play-button, .control-button {
   padding: 0.75rem 2rem;
-  background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-dark) 100%);
   color: white;
   border: none;
   border-radius: 25px;
@@ -42,7 +42,7 @@
 
 .play-icon {
   font-size: 1.5rem;
-  color: #e94560;
+  color: var(--primary);
 }
 
 .now-playing {
@@ -54,7 +54,7 @@
 }
 
 .now-playing p {
-  color: #0f3460;
+  color: var(--primary-dark);
   font-size: 1.2rem;
   font-weight: bold;
   margin: 0;
@@ -79,7 +79,7 @@
 
 .music-bars span {
   width: 8px;
-  background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-dark) 100%);
   border-radius: 4px;
   animation: musicBar 1s ease-in-out infinite;
 }

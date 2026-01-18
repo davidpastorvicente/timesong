@@ -40,7 +40,7 @@ export const translations = {
     
     // Game Over
     gameOver: "🎉 Game over! 🎉",
-    winner: "Winner:",
+    winner: "Winner",
     finalTimeline: "Final timeline:",
     playAgain: "Play again"
   },
@@ -85,7 +85,7 @@ export const translations = {
     
     // Game Over
     gameOver: "🎉 ¡Fin del juego! 🎉",
-    winner: "Ganador:",
+    winner: "Ganador",
     finalTimeline: "Timeline final:",
     playAgain: "Jugar de nuevo"
   }

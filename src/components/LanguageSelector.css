@@ -1,36 +1,34 @@
 .language-selector {
-  position: absolute;
-  right: 16px;
-  top: 16px;
   display: flex;
   gap: 0.5rem;
 }
 
 .language-button {
-  background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
-  color: white;
-  border: 2px solid #e94560;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 2px solid var(--primary);
   border-radius: 8px;
   padding: 0.5rem 1rem;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 8px var(--shadow);
   outline: none;
   min-width: 70px;
 }
 
 .language-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(233, 69, 96, 0.3);
-  border-color: #ff6b7a;
+  box-shadow: 0 4px 12px var(--shadow-lg);
+  background: var(--bg-secondary);
 }
 
 .language-button.active {
-  background: linear-gradient(135deg, #e94560 0%, #ff6b7a 100%);
-  border-color: #ff6b7a;
-  box-shadow: 0 4px 12px rgba(233, 69, 96, 0.5);
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px var(--shadow-lg);
 }
 
 .language-button:active {

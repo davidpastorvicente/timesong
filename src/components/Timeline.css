@@ -9,7 +9,7 @@
 
 .timeline.empty {
   justify-content: center;
-  color: #666;
+  color: var(--text-secondary);
   font-style: italic;
 }
 
@@ -27,13 +27,15 @@
 }
 
 .song-card {
-  background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-dark) 100%);
   color: white;
   padding: 1rem;
   border-radius: 8px;
   width: max-content;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px var(--shadow);
   transition: transform 0.2s;
+  max-width: 250px;
+  min-width: 150px;
 }
 
 .song-card:hover {
@@ -57,14 +59,13 @@
 }
 
 .song-year {
-  font-size: 1.2rem;
+  font-size: 1.75rem;
   font-weight: bold;
   margin-top: 0.5rem;
-  color: #e94560;
 }
 
 .timeline-arrow {
   font-size: 1.5rem;
-  color: #e94560;
+  color: var(--primary);
   font-weight: bold;
 }
