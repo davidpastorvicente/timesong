@@ -1,20 +1,19 @@
 import { useState } from 'react';
 import { translations } from '../translations';
-import { songSetOptions } from '../data/songs';
 import './GameSetup.css';
 
 export default function GameSetup({ onStartGame, language }) {
+  const t = translations[language];
+  
   const [numTeams, setNumTeams] = useState(2);
-  const [teamNames, setTeamNames] = useState(['Team 1', 'Team 2']);
+  const [teamNames, setTeamNames] = useState([`${t.team} 1`, `${t.team} 2`]);
   const [winningScore, setWinningScore] = useState(10);
   const [songSet, setSongSet] = useState('everything');
-
-  const t = translations[language];
 
   const handleNumTeamsChange = (num) => {
     setNumTeams(num);
     const newTeamNames = Array.from({ length: num }, (_, i) => 
-      teamNames[i] || `Team ${i + 1}`
+      teamNames[i] || `${t.team} ${i + 1}`
     );
     setTeamNames(newTeamNames);
   };
@@ -80,17 +79,32 @@ export default function GameSetup({ onStartGame, language }) {
         </div>
 
         <div className="form-group">
-          <label>{t.songSetLabel || 'Song Set:'}</label>
+          <label>{t.songSetLabel}</label>
           <div className="team-selector">
-            {songSetOptions.map(option => (
-              <button
-                key={option.id}
-                className={songSet === option.id ? 'active' : ''}
-                onClick={() => setSongSet(option.id)}
-              >
-                {option.label}
-              </button>
-            ))}
+            <button
+              className={songSet === 'everything' ? 'active' : ''}
+              onClick={() => setSongSet('everything')}
+            >
+              {t.songSetEverything}
+            </button>
+            <button
+              className={songSet === 'english' ? 'active' : ''}
+              onClick={() => setSongSet('english')}
+            >
+              {t.songSetEnglish}
+            </button>
+            <button
+              className={songSet === 'spanish' ? 'active' : ''}
+              onClick={() => setSongSet('spanish')}
+            >
+              {t.songSetSpanish}
+            </button>
+            <button
+              className={songSet === 'new' ? 'active' : ''}
+              onClick={() => setSongSet('new')}
+            >
+              {t.songSetNew}
+            </button>
           </div>
         </div>
 

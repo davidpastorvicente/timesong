@@ -97,8 +97,8 @@
 }
 
 .start-button {
-  padding: 1rem 3rem;
-  background: var(--primary);
+  padding: 1rem 1.5rem;
+  background: var(--success);
   color: white;
   border: none;
   border-radius: 8px;
@@ -111,6 +111,6 @@
 
 .start-button:hover {
   transform: translateY(-2px);
-  background: var(--primary-dark);
+  background: var(--success-dark);
   box-shadow: 0 6px 20px var(--shadow-lg);
 }

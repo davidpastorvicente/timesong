@@ -326,7 +326,7 @@
 
 .play-again-button {
   padding: 1rem 1.5rem;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  background: linear-gradient(135deg, var(--success) 0%, var(--success-dark) 100%);
   color: white;
   border: none;
   border-radius: 8px;

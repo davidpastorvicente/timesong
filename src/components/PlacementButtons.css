@@ -28,54 +28,43 @@
   font-weight: 600;
   transition: all 0.2s;
   box-shadow: 0 2px 4px var(--shadow);
+  color: var(--light);
 }
 
 .placement-button:hover {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
   box-shadow: 0 4px 8px var(--shadow-lg);
 }
 
 .placement-button.first {
-  background: var(--primary);
-  color: white;
-  border-color: var(--primary);
+  background: var(--success);
 }
 
 .placement-button.first:hover {
-  background: var(--primary-dark);
-  border-color: var(--primary-dark);
+  background: var(--success-dark);
 }
 
 .placement-button.before {
-  background: var(--warning);
-  color: var(--dark);
-  border-color: var(--warning);
+  background: var(--danger);
 }
 
 .placement-button.before:hover {
-  background: var(--warning-dark);
-  border-color: var(--warning-dark);
+  background: var(--danger-dark);
 }
 
 .placement-button.between {
-  background: var(--info);
-  color: var(--dark);
-  border-color: var(--info);
+  background: var(--success);
 }
 
 .placement-button.between:hover {
-  background: #0aa2c0;
-  border-color: #0aa2c0;
+  background: var(--success-dark);
 }
 
 .placement-button.after {
-  background: var(--success);
-  color: white;
-  border-color: var(--success);
+  background: var(--primary);
 }
 
 .placement-button.after:hover {
-  background: var(--success-dark);
-  border-color: var(--success-dark);
+  background: var(--primary-dark);
 }
 

@@ -5,9 +5,16 @@ export const translations = {
     setupSubtitle: "Build timelines by placing songs in chronological order!",
     teamsNumber: "Number of teams:",
     teamNames: "Team names:",
+    team: "Team",
     winningScoreLabel: "Winning score:",
     songSetLabel: "Song set:",
     startGameButton: "Start game",
+    
+    // Song Sets
+    songSetEverything: "Everything",
+    songSetEnglish: "English",
+    songSetSpanish: "Spanish",
+    songSetNew: "Recent (2010+)",
     
     // Game Board
     timeline: "Timeline",
@@ -49,9 +56,16 @@ export const translations = {
     setupSubtitle: "¡Construye timelines colocando canciones en orden cronológico!",
     teamsNumber: "Número de equipos:",
     teamNames: "Nombres de los equipos:",
+    team: "Equipo",
     winningScoreLabel: "Puntuación para ganar:",
     songSetLabel: "Tipo de canciones:",
     startGameButton: "Empezar",
+    
+    // Song Sets
+    songSetEverything: "Todas",
+    songSetEnglish: "Inglés",
+    songSetSpanish: "Español",
+    songSetNew: "Nuevas (2010+)",
     
     // Game Board
     timeline: "Cronología",
