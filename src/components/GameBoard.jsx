@@ -136,8 +136,8 @@ export default function GameBoard({ teams, winningScore, language, songSet }) {
       {gamePhase === 'gameOver' && winner !== null && (
         <div className="game-over">
           <div className="winner-announcement">
-            <h2>{t.gameOver}</h2>
-            <h1>{teams[winner]} {t.winner}</h1>
+            <h2>🎉 {t.gameOver} 🎉</h2>
+            <h1>{t.winner}: {teams[winner]}</h1>
             <div className="final-timeline">
               <h3>{t.finalTimeline}</h3>
               <Timeline timeline={teamTimelines[winner]} showYears={true} language={language} />

@@ -45,7 +45,7 @@ export const translations = {
     nextTurn: "Next turn",
     
     // Game Over
-    gameOver: "Game over! 🎉",
+    gameOver: "Game over!",
     winner: "Winner",
     finalTimeline: "Final timeline:",
     playAgain: "Play again"
@@ -96,7 +96,7 @@ export const translations = {
     nextTurn: "Siguiente turno",
     
     // Game Over
-    gameOver: "¡Fin del juego! 🎉",
+    gameOver: "¡Fin del juego!",
     winner: "Ganador",
     finalTimeline: "Cronología final:",
     playAgain: "Jugar de nuevo"
