@@ -1,3 +1,5 @@
+[![Deploy to GitHub Pages](https://github.com/davidpastorvicente/hitster-game/actions/workflows/deploy.yml/badge.svg?branch=master)](https://github.com/davidpastorvicente/hitster-game/actions/workflows/deploy.yml)
+
 # Hitster Game
 
 A music guessing game where teams build timelines by placing songs in chronological order.
