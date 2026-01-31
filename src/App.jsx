@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import GameSetup from './components/GameSetup'
-import GameBoard from './components/GameBoard'
+import MultiplayerGameBoard from './components/MultiplayerGameBoard'
 import LanguageSelector from './components/LanguageSelector'
 import ThemeToggle from './components/ThemeToggle'
 import AuthGuard from './components/AuthGuard'
@@ -8,9 +8,7 @@ import './App.css'
 
 function App() {
   const [gameStarted, setGameStarted] = useState(false)
-  const [teams, setTeams] = useState([])
-  const [winningScore, setWinningScore] = useState(10)
-  const [songSet, setSongSet] = useState('everything')
+  const [gameConfig, setGameConfig] = useState(null)
   
   // Initialize language from localStorage or default to 'es'
   const [language, setLanguage] = useState(() => {
@@ -23,10 +21,10 @@ function App() {
     localStorage.setItem('hitster_language', newLanguage)
   }
 
-  const handleStartGame = (teamNames, targetScore, selectedSongSet) => {
-    setTeams(teamNames)
-    setWinningScore(targetScore)
-    setSongSet(selectedSongSet)
+  const handleStartGame = (config) => {
+    // Config contains: mode, teamNames, winningScore, songSet
+    // For multiplayer: also gameCode, myTeamIndex, deviceId, isHost
+    setGameConfig(config)
     setGameStarted(true)
   }
 
@@ -40,7 +38,10 @@ function App() {
         {!gameStarted ? (
           <GameSetup onStartGame={handleStartGame} language={language} />
         ) : (
-          <GameBoard teams={teams} winningScore={winningScore} language={language} songSet={songSet} />
+          <MultiplayerGameBoard 
+            gameConfig={gameConfig}
+            language={language}
+          />
         )}
       </div>
     </AuthGuard>

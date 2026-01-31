@@ -21,21 +21,42 @@ async function fetchDeezerData(deezerId) {
   }
 }
 
-export default function GameBoard({ teams, winningScore, language, songSet }) {
-  const [currentTeamIndex, setCurrentTeamIndex] = useState(0);
-  const [currentSong, setCurrentSong] = useState(null);
+export default function GameBoard({ gameConfig, language, overrideState }) {
+  // Extract config - handle both single and multiplayer mode
+  const { teamNames, winningScore, songSet, mode, myTeamIndex } = gameConfig;
+  
+  const [currentTeamIndex, setCurrentTeamIndex] = useState(overrideState?.currentTeamIndex ?? 0);
+  const [currentSong, setCurrentSong] = useState(overrideState?.currentSong ?? null);
   const [teamTimelines, setTeamTimelines] = useState(
-    teams.map(() => [])
+    overrideState?.teamTimelines ?? teamNames.map(() => [])
   );
   const [availableSongs, setAvailableSongs] = useState([]);
   const [usedSongIds, setUsedSongIds] = useState([]);
-  const [gamePhase, setGamePhase] = useState('playing');
-  const [lastPlacement, setLastPlacement] = useState(null);
-  const [scores, setScores] = useState(teams.map(() => 0));
+  const [gamePhase, setGamePhase] = useState(overrideState?.gamePhase ?? 'playing');
+  const [lastPlacement, setLastPlacement] = useState(overrideState?.lastPlacement ?? null);
+  const [scores, setScores] = useState(overrideState?.scores ?? teamNames.map(() => 0));
   const [winner, setWinner] = useState(null);
   const [animationKey, setAnimationKey] = useState(0);
+  
+  // Check if interactions should be disabled (for multiplayer waiting)
+  const isDisabled = overrideState?.isDisabled ?? false;
+  
+  // Get the actual current team index from overrideState if available
+  const actualCurrentTeamIndex = overrideState?.actualCurrentTeamIndex ?? currentTeamIndex;
 
   const t = translations[language];
+  
+  // Use overrides if provided (multiplayer mode)
+  useEffect(() => {
+    if (overrideState) {
+      if (overrideState.currentSong) setCurrentSong(overrideState.currentSong);
+      if (overrideState.teamTimelines) setTeamTimelines(overrideState.teamTimelines);
+      if (overrideState.scores) setScores(overrideState.scores);
+      if (overrideState.gamePhase) setGamePhase(overrideState.gamePhase);
+      if (overrideState.lastPlacement !== undefined) setLastPlacement(overrideState.lastPlacement);
+      if (overrideState.currentTeamIndex !== undefined) setCurrentTeamIndex(overrideState.currentTeamIndex);
+    }
+  }, [overrideState]);
 
   const drawNewSong = useCallback(async (songs, usedIds) => {
     const availableToPlay = songs.filter(song => !usedIds.includes(song.youtubeId));
@@ -80,6 +101,13 @@ export default function GameBoard({ teams, winningScore, language, songSet }) {
   }, [loadSongs]);
 
   const handlePlacement = (position) => {
+    // Use override callback if provided (multiplayer mode)
+    if (overrideState?.onPlacement) {
+      overrideState.onPlacement(position);
+      return;
+    }
+    
+    // Single-device mode logic
     const currentTimeline = teamTimelines[currentTeamIndex];
     const newTimeline = [...currentTimeline];
     
@@ -120,8 +148,18 @@ export default function GameBoard({ teams, winningScore, language, songSet }) {
   };
 
   const handleNextTurn = async () => {
-    const nextTeamIndex = (currentTeamIndex + 1) % teams.length;
+    // Use override callback if provided (multiplayer mode)
+    if (overrideState?.onNextTurn) {
+      overrideState.onNextTurn();
+      return;
+    }
+    
+    // Single-device mode logic
+    // Set to loading state first to prevent flickering
+    setGamePhase('loading');
     setAnimationKey(prev => prev + 1); // Trigger re-render for animation
+    
+    const nextTeamIndex = (currentTeamIndex + 1) % teamNames.length;
     setCurrentTeamIndex(nextTeamIndex);
     await drawNewSong(availableSongs, usedSongIds);
   };
@@ -137,7 +175,7 @@ export default function GameBoard({ teams, winningScore, language, songSet }) {
         <div className="game-over">
           <div className="winner-announcement">
             <h2>🎉 {t.gameOver} 🎉</h2>
-            <h1>{t.winner}: {teams[winner]}</h1>
+            <h1>{t.winner}: {teamNames[winner]}</h1>
             <div className="final-timeline">
               <h3>{t.finalTimeline}</h3>
               <Timeline timeline={teamTimelines[winner]} showYears={true} language={language} />
@@ -161,8 +199,20 @@ export default function GameBoard({ teams, winningScore, language, songSet }) {
                     timeline={currentTimeline}
                     onPlacement={handlePlacement}
                     language={language}
+                    disabled={isDisabled}
                   />
                 </>
+              )}
+              
+              {gamePhase === 'loading' && (
+                <div style={{ 
+                  padding: '4rem', 
+                  textAlign: 'center', 
+                  color: 'var(--text-secondary)' 
+                }}>
+                  <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>🎵</div>
+                  <div>{t.loadingNextSong || 'Loading next song...'}</div>
+                </div>
               )}
               
               {gamePhase === 'result' && lastPlacement && (
@@ -181,7 +231,11 @@ export default function GameBoard({ teams, winningScore, language, songSet }) {
                       </div>
                     </div>
                   </div>
-                  <button className="next-turn-button" onClick={handleNextTurn}>
+                  <button 
+                    className="next-turn-button" 
+                    onClick={handleNextTurn}
+                    disabled={isDisabled}
+                  >
                     {t.nextTurn}
                   </button>
                 </>
@@ -191,30 +245,59 @@ export default function GameBoard({ teams, winningScore, language, songSet }) {
             {/* Right side: All Team Timelines */}
             <div className="timelines-section" key={animationKey}>
               <h3>{t.timeline}s:</h3>
-              {/* Reorder teams to put current team first */}
-              {[...Array(teams.length)].map((_, offset) => {
-                const index = (currentTeamIndex + offset) % teams.length;
-                return (
-                  <div 
-                    key={`${animationKey}-${index}`}
-                    className={`team-timeline-container ${index === currentTeamIndex ? 'active' : ''}`}
-                    style={{ 
-                      animationDelay: `${offset * 0.1}s`,
-                      order: offset
-                    }}
-                  >
-                    <div className="team-timeline-header">
-                      <h4>{teams[index]}</h4>
-                      <span className="team-score">{scores[index]} / {winningScore}</span>
+              {/* In multiplayer, keep my team on top; in single-device, reorder to show current team first */}
+              {mode === 'multi' && myTeamIndex !== null && myTeamIndex !== undefined ? (
+                // Multiplayer mode: My team first, then others
+                teamNames.map((_, index) => {
+                  // Calculate display order: my team first, then others in sequence
+                  const displayIndex = index === myTeamIndex ? 0 : (index < myTeamIndex ? index + 1 : index);
+                  return (
+                    <div 
+                      key={`${animationKey}-${index}`}
+                      className={`team-timeline-container ${index === actualCurrentTeamIndex ? 'active' : ''}`}
+                      style={{ 
+                        animationDelay: `${displayIndex * 0.1}s`,
+                        order: displayIndex
+                      }}
+                    >
+                      <div className="team-timeline-header">
+                        <h4>{teamNames[index]}</h4>
+                        <span className="team-score">{scores[index]} / {winningScore}</span>
+                      </div>
+                      <Timeline 
+                        timeline={teamTimelines[index]} 
+                        showYears={true} 
+                        language={language} 
+                      />
                     </div>
-                    <Timeline 
-                      timeline={teamTimelines[index]} 
-                      showYears={true} 
-                      language={language} 
-                    />
-                  </div>
-                );
-              })}
+                  );
+                })
+              ) : (
+                // Single-device mode: Reorder to put current team first
+                [...Array(teamNames.length)].map((_, offset) => {
+                  const index = (currentTeamIndex + offset) % teamNames.length;
+                  return (
+                    <div 
+                      key={`${animationKey}-${index}`}
+                      className={`team-timeline-container ${index === currentTeamIndex ? 'active' : ''}`}
+                      style={{ 
+                        animationDelay: `${offset * 0.1}s`,
+                        order: offset
+                      }}
+                    >
+                      <div className="team-timeline-header">
+                        <h4>{teamNames[index]}</h4>
+                        <span className="team-score">{scores[index]} / {winningScore}</span>
+                      </div>
+                      <Timeline 
+                        timeline={teamTimelines[index]} 
+                        showYears={true} 
+                        language={language} 
+                      />
+                    </div>
+                  );
+                })
+              )}
             </div>
           </div>
         </>

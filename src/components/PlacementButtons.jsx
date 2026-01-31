@@ -1,15 +1,16 @@
 import { translations } from '../translations';
 import './PlacementButtons.css';
 
-export default function PlacementButtons({ timeline, onPlacement, language }) {
+export default function PlacementButtons({ timeline = [], onPlacement, language, disabled = false }) {
   const t = translations[language];
 
-  if (timeline.length === 0) {
+  if (!timeline || timeline.length === 0) {
     return (
       <div className="placement-buttons">
         <button 
           className="placement-button first"
           onClick={() => onPlacement(0)}
+          disabled={disabled}
         >
           {t.placeAsFirst}
         </button>
@@ -51,6 +52,7 @@ export default function PlacementButtons({ timeline, onPlacement, language }) {
             key={index}
             className={`placement-button ${pos.type}`}
             onClick={() => onPlacement(pos.position)}
+            disabled={disabled}
           >
             {pos.label}
           </button>

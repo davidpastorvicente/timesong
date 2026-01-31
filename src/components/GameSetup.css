@@ -45,6 +45,26 @@
   color: var(--text-primary);
 }
 
+/* Generic input styling matching team names */
+.form-group input[type="text"] {
+  padding: 0.75rem;
+  width: 250px;
+  max-width: 100%;
+  border: 2px solid var(--border-color);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+  display: block;
+  margin: 0 auto;
+}
+
+.form-group input[type="text"]:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
 .team-selector {
   display: flex;
   gap: 0.5rem;
@@ -114,4 +134,215 @@
   transform: translateY(-2px);
   background: var(--success-dark);
   box-shadow: 0 6px 20px var(--shadow-lg);
+}
+
+/* Multiplayer Styles */
+.mode-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.mode-button {
+  padding: 1.5rem;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  color: var(--text-primary);
+}
+
+.mode-button:hover {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--shadow);
+}
+
+.multiplayer-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+
+.create-button, .join-button {
+  padding: 1rem 2rem;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  width: 100%;
+}
+
+.create-button:hover, .join-button:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--shadow);
+}
+
+.divider {
+  color: var(--text-secondary);
+  font-weight: bold;
+  padding: 0.5rem 0;
+}
+
+.join-section {
+  width: 100%;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.join-section input {
+  flex: 1;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.2rem;
+  font-weight: 600;
+}
+
+.join-section input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.join-button {
+  width: auto;
+  padding: 0.75rem 1.5rem;
+}
+
+.game-code-display {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.game-code-display h2, .game-code-display h3 {
+  margin: 0 0 1rem 0;
+  color: var(--text-primary);
+}
+
+.code {
+  font-size: 3rem;
+  font-weight: bold;
+  letter-spacing: 0.5rem;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  border-radius: 12px;
+  margin: 1rem 0;
+  font-family: 'Courier New', monospace;
+}
+
+.code.small {
+  font-size: 2rem;
+  padding: 0.5rem 1rem;
+}
+
+.copy-button {
+  padding: 0.75rem 1.5rem;
+  background: var(--success);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.copy-button:hover {
+  background: var(--success-dark);
+  transform: translateY(-2px);
+}
+
+.players-status {
+  margin: 2rem 0;
+}
+
+.players-status h3 {
+  margin: 0 0 1rem 0;
+  color: var(--text-primary);
+}
+
+.team-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.team-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.team-item.connected {
+  background: var(--success);
+  color: white;
+  border-color: var(--success);
+}
+
+.team-item .status {
+  font-size: 1.2rem;
+}
+
+.team-selector-section {
+  margin: 2rem 0;
+}
+
+.team-selector-section h3 {
+  margin: 0 0 1rem 0;
+  color: var(--text-primary);
+}
+
+.team-select-button {
+  width: 100%;
+  padding: 1.25rem;
+  margin-bottom: 0.75rem;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  color: var(--text-primary);
+}
+
+.team-select-button:hover:not(.taken) {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  transform: translateY(-2px);
+}
+
+.team-select-button.taken {
+  background: var(--bg-secondary);
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.error {
+  color: var(--danger);
+  font-weight: 600;
+  margin-top: 0.5rem;
 }

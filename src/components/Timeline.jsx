@@ -24,10 +24,10 @@ function getColorForSong(title) {
   return CARD_COLORS[index];
 }
 
-export default function Timeline({ timeline, showYears, language }) {
+export default function Timeline({ timeline = [], showYears, language }) {
   const t = translations[language];
 
-  if (timeline.length === 0) {
+  if (!timeline || timeline.length === 0) {
     return (
       <div className="timeline empty">
         <p>{t.noSongs}</p>
