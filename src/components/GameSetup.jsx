@@ -3,6 +3,61 @@ import { translations } from '../translations';
 import { generateGameCode, createGameSession, checkGameExists, joinGameSession, getDeviceId, subscribeToGame } from '../services/gameSession';
 import './GameSetup.css';
 
+// Reusable component for song set selector
+function SongSetSelector({ songSet, setSongSet, t }) {
+  return (
+    <div className="form-group">
+      <label>{t.songSetLabel}</label>
+      <div className="team-selector">
+        <button
+          className={songSet === 'everything' ? 'active' : ''}
+          onClick={() => setSongSet('everything')}
+        >
+          {t.songSetEverything}
+        </button>
+        <button
+          className={songSet === 'english' ? 'active' : ''}
+          onClick={() => setSongSet('english')}
+        >
+          {t.songSetEnglish}
+        </button>
+        <button
+          className={songSet === 'spanish' ? 'active' : ''}
+          onClick={() => setSongSet('spanish')}
+        >
+          {t.songSetSpanish}
+        </button>
+        <button
+          className={songSet === 'new' ? 'active' : ''}
+          onClick={() => setSongSet('new')}
+        >
+          {t.songSetNew}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Reusable component for winning score selector
+function WinningScoreSelector({ winningScore, setWinningScore, t }) {
+  return (
+    <div className="form-group">
+      <label>{t.winningScoreLabel}</label>
+      <div className="team-selector">
+        {[5, 10, 15, 20].map(num => (
+          <button
+            key={num}
+            className={winningScore === num ? 'active' : ''}
+            onClick={() => setWinningScore(num)}
+          >
+            {num}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function GameSetup({ onStartGame, language }) {
   const t = translations[language];
   
@@ -251,50 +306,9 @@ export default function GameSetup({ onStartGame, language }) {
                 </div>
               </div>
 
-              <div className="form-group">
-                <label>{t.winningScoreLabel}</label>
-                <div className="team-selector">
-                  {[5, 10, 15, 20].map(num => (
-                    <button
-                      key={num}
-                      className={winningScore === num ? 'active' : ''}
-                      onClick={() => setWinningScore(num)}
-                    >
-                      {num}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              <WinningScoreSelector winningScore={winningScore} setWinningScore={setWinningScore} t={t} />
 
-              <div className="form-group">
-                <label>{t.songSetLabel}</label>
-                <div className="team-selector">
-                  <button
-                    className={songSet === 'everything' ? 'active' : ''}
-                    onClick={() => setSongSet('everything')}
-                  >
-                    {t.songSetEverything}
-                  </button>
-                  <button
-                    className={songSet === 'english' ? 'active' : ''}
-                    onClick={() => setSongSet('english')}
-                  >
-                    {t.songSetEnglish}
-                  </button>
-                  <button
-                    className={songSet === 'spanish' ? 'active' : ''}
-                    onClick={() => setSongSet('spanish')}
-                  >
-                    {t.songSetSpanish}
-                  </button>
-                  <button
-                    className={songSet === 'new' ? 'active' : ''}
-                    onClick={() => setSongSet('new')}
-                  >
-                    {t.songSetNew}
-                  </button>
-                </div>
-              </div>
+              <SongSetSelector songSet={songSet} setSongSet={setSongSet} t={t} />
 
               <button className="start-button" onClick={handleStart}>
                 {t.startGameButton}
@@ -337,50 +351,9 @@ export default function GameSetup({ onStartGame, language }) {
                 />
               </div>
 
-              <div className="form-group">
-                <label>{t.winningScoreLabel}</label>
-                <div className="team-selector">
-                  {[5, 10, 15, 20].map(num => (
-                    <button
-                      key={num}
-                      className={winningScore === num ? 'active' : ''}
-                      onClick={() => setWinningScore(num)}
-                    >
-                      {num}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              <WinningScoreSelector winningScore={winningScore} setWinningScore={setWinningScore} t={t} />
 
-              <div className="form-group">
-                <label>{t.songSetLabel}</label>
-                <div className="team-selector">
-                  <button
-                    className={songSet === 'everything' ? 'active' : ''}
-                    onClick={() => setSongSet('everything')}
-                  >
-                    {t.songSetEverything}
-                  </button>
-                  <button
-                    className={songSet === 'english' ? 'active' : ''}
-                    onClick={() => setSongSet('english')}
-                  >
-                    {t.songSetEnglish}
-                  </button>
-                  <button
-                    className={songSet === 'spanish' ? 'active' : ''}
-                    onClick={() => setSongSet('spanish')}
-                  >
-                    {t.songSetSpanish}
-                  </button>
-                  <button
-                    className={songSet === 'new' ? 'active' : ''}
-                    onClick={() => setSongSet('new')}
-                  >
-                    {t.songSetNew}
-                  </button>
-                </div>
-              </div>
+              <SongSetSelector songSet={songSet} setSongSet={setSongSet} t={t} />
 
               {error && <p className="error">{error}</p>}
 
