@@ -11,18 +11,38 @@ export async function fetchDeezerPreview(song) {
   let albumCover = song.albumCover || null; // Album covers are permanent
   
   if (song.deezerId) {
-    try {
-      const corsProxy = 'https://corsproxy.io/?';
-      const response = await fetch(`${corsProxy}https://api.deezer.com/track/${song.deezerId}`);
-      const data = await response.json();
-      if (data.preview) {
-        previewUrl = data.preview;
-        if (!albumCover && data.album?.cover_medium) {
-          albumCover = data.album.cover_medium;
+    const corsProxies = [
+      'https://corsproxy.io/?',
+      'https://cors.eu.org/'
+    ];
+    
+    // Try each CORS proxy with 5 second timeout
+    for (const proxy of corsProxies) {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        
+        const url = `${proxy}https://api.deezer.com/track/${song.deezerId}`;
+        const response = await fetch(url, { signal: controller.signal });
+        clearTimeout(timeoutId);
+        
+        const data = await response.json();
+        if (data.preview) {
+          previewUrl = data.preview;
+          if (!albumCover && data.album?.cover_medium) {
+            albumCover = data.album.cover_medium;
+          }
+          console.log(`✓ Deezer preview fetched via ${proxy}`);
+          break; // Success, exit loop
         }
+      } catch (error) {
+        console.warn(`CORS proxy ${proxy} failed or timed out:`, error.message);
+        // Continue to next proxy
       }
-    } catch (error) {
-      console.warn('Failed to fetch Deezer preview, falling back to YouTube:', error);
+    }
+    
+    if (!previewUrl) {
+      console.warn('All CORS proxies failed, falling back to YouTube');
     }
   }
   
