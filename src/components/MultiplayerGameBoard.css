@@ -19,6 +19,8 @@
   align-items: center;
   gap: 0.5rem;
   white-space: nowrap;
+  min-height: 45px;
+  max-width: 100%;
 }
 
 .turn-badge.active {
@@ -48,11 +50,6 @@
 
 /* Mobile adjustments */
 @media (max-width: 767px) {
-  .turn-indicator {
-    top: 0.5rem;
-    left: 0.5rem;
-  }
-  
   .turn-badge {
     font-size: 0.9rem;
     padding: 0.4rem 0.8rem;

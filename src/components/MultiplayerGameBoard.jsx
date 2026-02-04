@@ -6,7 +6,7 @@ import { fetchDeezerPreview } from '../utils/deezer';
 import GameBoard from './GameBoard';
 import './MultiplayerGameBoard.css';
 
-export default function MultiplayerGameBoard({ gameConfig, language }) {
+export default function MultiplayerGameBoard({ gameConfig, language, onTurnIndicatorChange }) {
   const { mode, gameCode, myTeamIndex, deviceId, isHost } = gameConfig;
   const [gameData, setGameData] = useState(null);
   const [isMyTurn, setIsMyTurn] = useState(false);
@@ -67,6 +67,38 @@ export default function MultiplayerGameBoard({ gameConfig, language }) {
     };
   }, [mode, gameCode, myTeamIndex, isHost, initializeGame]);
 
+  // Update turn indicator in parent
+  useEffect(() => {
+    if (mode === 'single') {
+      if (onTurnIndicatorChange) onTurnIndicatorChange(null);
+      return;
+    }
+
+    if (!gameData || !gameData.state.currentSong) {
+      if (onTurnIndicatorChange) onTurnIndicatorChange(null);
+      return;
+    }
+
+    const currentTeam = gameData.teams[gameData.state.currentTeamIndex];
+    const t = translations[language];
+
+    const turnIndicatorElement = (
+      <div className="turn-indicator">
+        {isMyTurn && myTeamIndex !== null ? (
+          <div className="turn-badge active">
+            🎮 {t.yourTurn}
+          </div>
+        ) : (
+          <div className="turn-badge waiting">
+            ⏳ {currentTeam?.name || '...'}
+          </div>
+        )}
+      </div>
+    );
+    
+    if (onTurnIndicatorChange) onTurnIndicatorChange(turnIndicatorElement);
+  }, [mode, gameData, isMyTurn, myTeamIndex, language, onTurnIndicatorChange]);
+
   // Single-device mode - just render GameBoard directly
   if (mode === 'single') {
     return <GameBoard gameConfig={gameConfig} language={language} />;
@@ -81,32 +113,16 @@ export default function MultiplayerGameBoard({ gameConfig, language }) {
     );
   }
 
-  const currentTeam = gameData.teams[gameData.state.currentTeamIndex];
-  const t = translations[language];
-
-  // Show game board for everyone, with different banners
+  // Show game board for everyone
   return (
-    <div>
-      <div className="turn-indicator">
-        {isMyTurn && myTeamIndex !== null ? (
-          <div className="turn-badge active">
-            🎮 {t.yourTurn}
-          </div>
-        ) : (
-          <div className="turn-badge waiting">
-            ⏳ {t.waitingForTurn} {currentTeam?.name || '...'}
-          </div>
-        )}
-      </div>
-      <MultiplayerGameBoardActive
-        gameConfig={gameConfig}
-        gameData={gameData}
-        language={language}
-        onPlaceSong={handlePlaceSong}
-        onNextTurn={handleNextTurn}
-        isMyTurn={isMyTurn}
-      />
-    </div>
+    <MultiplayerGameBoardActive
+      gameConfig={gameConfig}
+      gameData={gameData}
+      language={language}
+      onPlaceSong={handlePlaceSong}
+      onNextTurn={handleNextTurn}
+      isMyTurn={isMyTurn}
+    />
   );
 
   async function handlePlaceSong(timeline, score, isCorrect, position) {

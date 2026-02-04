@@ -6,9 +6,23 @@
 .top-controls {
   position: fixed;
   top: 1rem;
+  left: 1rem;
   right: 1rem;
   display: flex;
+  align-items: center;
+  z-index: 500;
+  pointer-events: none; /* Allow clicks through gaps */
+}
+
+.top-controls > * {
+  pointer-events: auto; /* Re-enable clicks on actual elements */
+}
+
+/* Right side controls */
+.top-controls-right {
+  display: flex;
   gap: 0.5rem;
-  z-index: 1000;
+  margin-left: auto;
+  min-height: 45px;
 }
 

@@ -9,6 +9,7 @@ import './App.css'
 function App() {
   const [gameStarted, setGameStarted] = useState(false)
   const [gameConfig, setGameConfig] = useState(null)
+  const [turnIndicator, setTurnIndicator] = useState(null)
   
   // Initialize language from localStorage or default to 'es'
   const [language, setLanguage] = useState(() => {
@@ -32,8 +33,11 @@ function App() {
     <AuthGuard language={language} onLanguageChange={handleLanguageChange}>
       <div className="app">
         <div className="top-controls">
-          <LanguageSelector currentLanguage={language} onLanguageChange={handleLanguageChange} />
-          <ThemeToggle />
+          {turnIndicator}
+          <div className="top-controls-right">
+            <LanguageSelector currentLanguage={language} onLanguageChange={handleLanguageChange} />
+            <ThemeToggle />
+          </div>
         </div>
         {!gameStarted ? (
           <GameSetup onStartGame={handleStartGame} language={language} />
@@ -41,6 +45,7 @@ function App() {
           <MultiplayerGameBoard 
             gameConfig={gameConfig}
             language={language}
+            onTurnIndicatorChange={setTurnIndicator}
           />
         )}
       </div>
