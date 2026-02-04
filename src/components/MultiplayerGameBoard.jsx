@@ -120,16 +120,32 @@ export default function MultiplayerGameBoard({ gameConfig, language }) {
       score: score
     });
     
-    // Update last placement and game phase to 'result' so all players see it
-    await updateGameState(gameCode, {
-      lastPlacement: { 
-        correct: isCorrect, 
-        teamIndex: myTeamIndex,
-        song: gameData.state.currentSong,
-        position: position
-      },
-      gamePhase: 'result'
-    });
+    // Check if this team won
+    const { winningScore } = gameConfig;
+    if (isCorrect && score >= winningScore) {
+      // Winner! Update game state to game over
+      await updateGameState(gameCode, {
+        lastPlacement: { 
+          correct: isCorrect, 
+          teamIndex: myTeamIndex,
+          song: gameData.state.currentSong,
+          position: position
+        },
+        gamePhase: 'gameOver',
+        winner: myTeamIndex
+      });
+    } else {
+      // Update last placement and game phase to 'result' so all players see it
+      await updateGameState(gameCode, {
+        lastPlacement: { 
+          correct: isCorrect, 
+          teamIndex: myTeamIndex,
+          song: gameData.state.currentSong,
+          position: position
+        },
+        gamePhase: 'result'
+      });
+    }
   }
 
   async function handleNextTurn(nextSong) {
@@ -234,6 +250,7 @@ function MultiplayerGameBoardActive({ gameConfig, gameData, language, onPlaceSon
         scores: gameData.teams.map(t => t.score || 0),
         gamePhase,
         lastPlacement,
+        winner: gameData.state.winner,
         onPlacement: handlePlacement,
         onNextTurn: handleNextTurn,
         isDisabled: !isMyTurn

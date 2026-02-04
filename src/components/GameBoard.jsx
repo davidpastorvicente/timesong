@@ -21,7 +21,7 @@ export default function GameBoard({ gameConfig, language, overrideState }) {
   const [gamePhase, setGamePhase] = useState(overrideState?.gamePhase ?? 'playing');
   const [lastPlacement, setLastPlacement] = useState(overrideState?.lastPlacement ?? null);
   const [scores, setScores] = useState(overrideState?.scores ?? teamNames.map(() => 0));
-  const [winner, setWinner] = useState(null);
+  const [winner, setWinner] = useState(overrideState?.winner ?? null);
   const [animationKey, setAnimationKey] = useState(0);
   
   // Check if interactions should be disabled (for multiplayer waiting)
@@ -33,6 +33,7 @@ export default function GameBoard({ gameConfig, language, overrideState }) {
   const t = translations[language];
   
   // Use overrides if provided (multiplayer mode)
+  // This synchronizes Firebase state to local state for multiplayer
   useEffect(() => {
     if (overrideState) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -42,6 +43,7 @@ export default function GameBoard({ gameConfig, language, overrideState }) {
       if (overrideState.gamePhase) setGamePhase(overrideState.gamePhase);
       if (overrideState.lastPlacement !== undefined) setLastPlacement(overrideState.lastPlacement);
       if (overrideState.currentTeamIndex !== undefined) setCurrentTeamIndex(overrideState.currentTeamIndex);
+      if (overrideState.winner !== undefined) setWinner(overrideState.winner);
     }
   }, [overrideState]);
 
