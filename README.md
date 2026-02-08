@@ -73,21 +73,46 @@ npm run dev
 
 ## 🎨 Customization
 
+### Checking for Duplicates
+
+Check for duplicate songs in the database:
+
+```bash
+python3 scripts/check-duplicates.py
+```
+
+This will scan both English and Spanish song databases for:
+- 🔴 Duplicate Deezer IDs
+- 🔴 Duplicate YouTube IDs  
+- 🔴 Duplicate titles (case-insensitive)
+
+**When duplicates are found**, the script automatically:
+1. Re-fetches the correct YouTube ID for each song (using `ytmusic.search()`)
+2. Re-fetches the correct Deezer ID for each song (using Deezer search API)
+3. Shows you the new correct IDs
+
+**To automatically fix the files:**
+```bash
+python3 scripts/check-duplicates.py --fix
+```
+
+This will update the data files with the correct IDs.
+
 ### Adding Songs from YouTube Playlists
 
 Use the automated script to add entire playlists:
 
 ```bash
-python3 add-playlist.py PLAYLIST_ID
+python3 scripts/add-playlist.py PLAYLIST_ID
 
 # Or with full URL:
-python3 add-playlist.py "https://music.youtube.com/playlist?list=..."
+python3 scripts/add-playlist.py "https://music.youtube.com/playlist?list=..."
 
 # For Spanish songs:
-python3 add-playlist.py PLAYLIST_ID --language es
+python3 scripts/add-playlist.py PLAYLIST_ID --language es
 
 # For large playlists, limit to first N successful imports:
-python3 add-playlist.py PLAYLIST_ID --limit 50
+python3 scripts/add-playlist.py PLAYLIST_ID --limit 50
 ```
 
 The script will:
