@@ -36,39 +36,35 @@ def extract_songs_from_file(filepath):
     return songs, content
 
 def fetch_youtube_id(ytmusic, title, artist):
-    """Fetch YouTube ID from YouTube Music API."""
+    """Fetch YouTube ID by searching YouTube Music"""
     try:
         search_query = f"{title} {artist}"
         search_results = ytmusic.search(search_query, filter="songs", limit=1)
-        
+
         if search_results and len(search_results) > 0:
-            video_id = search_results[0].get('videoId')
+            result = search_results[0]
+            video_id = result.get('videoId')
             return video_id
         return None
     except Exception as e:
-        print(f"  ✗ YouTube error: {e}")
+        print(f"      ⚠️  YouTube search error: {e}")
         return None
 
-def fetch_deezer_data(title, artist):
-    """Fetch Deezer track ID from Deezer API."""
+def fetch_deezer_id(title, artist):
+    """Fetch Deezer ID by searching Deezer API"""
     try:
         search_query = f"{title} {artist}"
-        url = "https://api.deezer.com/search"
-        params = {'q': search_query}
-        
-        response = requests.get(url, params=params, timeout=10)
-        
-        if response.status_code == 200:
-            data = response.json()
-            
-            if data.get('data') and len(data['data']) > 0:
-                track = data['data'][0]
-                return str(track['id'])
-        
+        url = f"https://api.deezer.com/search/track?q={search_query}"
+        response = requests.get(url, timeout=10)
+        data = response.json()
+
+        if 'data' in data and len(data['data']) > 0:
+            track = data['data'][0]
+            deezer_id = str(track['id'])
+            return deezer_id
         return None
-        
     except Exception as e:
-        print(f"  ✗ Deezer error: {e}")
+        print(f"      ⚠️  Deezer search error: {e}")
         return None
 
 def update_songs_file(filepath, youtube_updates, deezer_updates):
@@ -229,7 +225,7 @@ def main():
                 if force_mode and current_id and current_id.strip():
                     print(f"    Current: {current_id}")
                 
-                deezer_id = fetch_deezer_data(song['title'], song['artist'])
+                deezer_id = fetch_deezer_id(song['title'], song['artist'])
                 
                 if deezer_id:
                     deezer_updates[(song['title'], song['artist'])] = deezer_id
