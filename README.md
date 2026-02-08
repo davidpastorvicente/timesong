@@ -16,11 +16,12 @@ A music guessing game where teams build timelines by placing songs in chronologi
 
 ## 🎵 Song Library
 
-The game includes **291 curated songs** (125 English, 166 Spanish/Latin):
+The game includes **368 curated songs** (205 English, 163 Spanish/Latin):
 
 **English Songs:**
 - 1960s-1990s: Classic hits from The Beatles, Queen, Michael Jackson, Nirvana
-- 2000s-2020s: Modern anthems from Beyoncé, Ed Sheeran, The Weeknd, Billie Eilish
+- 2000s-2020s: Modern anthems from Beyoncé, Ed Sheeran, The Weeknd, Billie Eilish  
+- 2010s party hits: Rihanna, Lady Gaga, Calvin Harris, Ariana Grande, Justin Bieber
 
 **Spanish/Latin Songs:**
 - Heavy emphasis on reggaeton and Latin pop
@@ -30,9 +31,10 @@ The game includes **291 curated songs** (125 English, 166 Spanish/Latin):
 
 ## 🎧 Audio Playback
 
-- **Deezer API**: 290 songs (99%) play ad-free 30-second previews via Deezer
+- **Deezer API**: 367 songs (~99%) play ad-free 30-second previews via Deezer
 - **YouTube Fallback**: 1 song uses YouTube embed (may show ads)
-- Preview URLs are fetched dynamically for freshness
+- Preview URLs are fetched dynamically at runtime for freshness
+- CORS proxy fallback chain ensures reliability
 
 ## 🚀 Getting Started
 
@@ -49,27 +51,58 @@ npm run dev
 ## 🛠 Tech Stack
 
 - **React** - UI framework
-- **Vite** - Build tool
+- **Vite** - Build tool & dev server
+- **Firebase Realtime Database** - Multi-device sync
 - **Deezer API** - Ad-free audio previews (30 seconds)
 - **YouTube Embeds** - Fallback audio playback
-- **CSS3** - Styling with modern gradients
+- **CSS3** - Modern styling with theme system
 
 ## 📝 Features
 
 - ✅ Turn-based gameplay for multiple teams
+- ✅ **Single-device mode** (hot-seat multiplayer)
+- ✅ **Multi-device mode** (real-time sync via Firebase)
 - ✅ Configurable winning conditions
 - ✅ Hidden song playback (no spoilers!)
 - ✅ Play/Pause controls
 - ✅ Visual timeline display
 - ✅ Immediate feedback on correct/incorrect placements
 - ✅ Winner announcement with full timeline
-- ✅ Modern dark theme UI
+- ✅ Modern dark/light theme UI
+- ✅ Bilingual support (English/Spanish)
 
 ## 🎨 Customization
 
-### Adding New Songs
+### Adding Songs from YouTube Playlists
 
-To add songs, simply edit `src/data/songs.js` and add entries **without any IDs**. You can place them anywhere in the file!
+Use the automated script to add entire playlists:
+
+```bash
+python3 add-playlist.py PLAYLIST_ID
+
+# Or with full URL:
+python3 add-playlist.py "https://music.youtube.com/playlist?list=..."
+
+# For Spanish songs:
+python3 add-playlist.py PLAYLIST_ID --language es
+
+# For large playlists, limit to first N successful imports:
+python3 add-playlist.py PLAYLIST_ID --limit 50
+```
+
+The script will:
+- ✅ Fetch all tracks from the playlist (titles and artists)
+- ✅ Optionally process until N songs are successfully imported
+- ✅ Search for official YouTube video IDs (ensures best/canonical versions)
+- ✅ Get YouTube IDs, Deezer IDs, album covers, and years
+- ✅ Remove duplicates automatically
+- ✅ Append formatted songs to the correct data file
+
+**Note:** When using `--limit 50`, the script keeps processing songs until 50 are successfully imported (skipping any that fail).
+
+### Adding Individual Songs
+
+To add songs manually, edit `src/data/songs.js` and add entries **without any IDs**:
 
 ```javascript
 {
