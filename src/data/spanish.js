@@ -102,7 +102,7 @@ export const spanishSongs = [
   { title: "El Perdón", artist: "Nicky Jam & Enrique Iglesias", year: 2017, youtubeId: "zs6aDvOTlMo", deezerId: "140421809", albumCover: "https://cdn-images.dzcdn.net/images/cover/68b6ebdd0514f16c57a87552a33d26d3/250x250-000000-80-0-0.jpg" },
   { title: "Hasta el Amanecer", artist: "Nicky Jam", year: 2017, youtubeId: "LKf8GodiVtU", deezerId: "140421811", albumCover: "https://cdn-images.dzcdn.net/images/cover/68b6ebdd0514f16c57a87552a33d26d3/250x250-000000-80-0-0.jpg" },
   { title: "Shaky Shaky", artist: "Daddy Yankee", year: 2016, youtubeId: "kmxvNIhOkdE", deezerId: "122701266", albumCover: "https://cdn-images.dzcdn.net/images/cover/31d2aa8add47d4651e124f13ee897fc7/250x250-000000-80-0-0.jpg" },
-  { title: "Échame la Culpa", artist: "Luis Fonsi ft. Demi Lovato", year: 2017, youtubeId: "jwV_3cCNapk", deezerId: "427935102", albumCover: "https://cdn-images.dzcdn.net/images/cover/3e8b9d9d878db36bd594c0347b61791d/250x250-000000-80-0-0.jpg" },
+  { title: "Échame la Culpa", artist: "Luis Fonsi ft. Demi Lovato", year: 2017, youtubeId: "YDswuo2dIvY", deezerId: "427935102", albumCover: "https://cdn-images.dzcdn.net/images/cover/3e8b9d9d878db36bd594c0347b61791d/250x250-000000-80-0-0.jpg" },
   
   // 2020s
   { title: "Un Verano Sin Ti", artist: "Bad Bunny", year: 2022, youtubeId: "IO6rgnJfmiM", deezerId: "1741494487", albumCover: "https://cdn-images.dzcdn.net/images/cover/b29d1070377b784384c2456093f96a66/250x250-000000-80-0-0.jpg" },
