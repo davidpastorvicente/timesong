@@ -1,10 +1,10 @@
 [![Deploy to GitHub Pages](https://github.com/davidpastorvicente/timesong/actions/workflows/deploy.yml/badge.svg?branch=master)](https://github.com/davidpastorvicente/timesong/actions/workflows/deploy.yml)
 
-# TimeSong Game
+# TimeSong
 
 A music guessing game where teams build timelines by placing songs in chronological order.
 
-![TimeSong Logo](screenshot.png)
+![TimeSong Logo](screenshots/light-en.png)
 
 ## 🎮 How to Play
 
