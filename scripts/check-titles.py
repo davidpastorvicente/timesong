@@ -87,7 +87,7 @@ def fetch_deezer_title(deezer_id):
 def check_song_titles():
     """Check all songs and validate titles against Deezer API"""
     
-    print("🔍 TIMESONG TITLE VALIDATOR\n")
+    print("🔍 CHRONOTUNES TITLE VALIDATOR\n")
     
     # Load songs from both files
     english_songs = load_songs_from_file('src/data/english.js')

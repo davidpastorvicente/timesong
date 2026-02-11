@@ -9,7 +9,7 @@ export default function AuthGuard({ children, language, onLanguageChange }) {
   const [error, setError] = useState('');
   
   // Check authentication status from sessionStorage
-  const authToken = sessionStorage.getItem('timesong_auth');
+  const authToken = sessionStorage.getItem('chronotunes_auth');
   const [isAuthenticated, setIsAuthenticated] = useState(authToken === 'authenticated');
   
   const t = translations[language];
@@ -26,7 +26,7 @@ export default function AuthGuard({ children, language, onLanguageChange }) {
     }
     
     if (password === correctPassword) {
-      sessionStorage.setItem('timesong_auth', 'authenticated');
+      sessionStorage.setItem('chronotunes_auth', 'authenticated');
       setIsAuthenticated(true);
       setError('');
     } else {
@@ -46,7 +46,10 @@ export default function AuthGuard({ children, language, onLanguageChange }) {
         <ThemeToggle />
       </div>
       <div className="auth-box">
-        <h1>{t.authTitle}</h1>
+        <h1>
+          <img src={import.meta.env.BASE_URL + 'logo.svg'} alt="ChronoTunes" className="title-logo" />
+          {t.authTitle}
+        </h1>
         <p>{t.authSubtitle}</p>
         
         <form onSubmit={handleSubmit}>

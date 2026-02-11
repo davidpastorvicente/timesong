@@ -108,10 +108,10 @@ export async function setHostDevice(gameCode, deviceId) {
 
 // Generate unique device ID
 export function getDeviceId() {
-  let deviceId = localStorage.getItem('timesong_device_id');
+  let deviceId = localStorage.getItem('chronotunes_device_id');
   if (!deviceId) {
     deviceId = `device_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    localStorage.setItem('timesong_device_id', deviceId);
+    localStorage.setItem('chronotunes_device_id', deviceId);
   }
   return deviceId;
 }

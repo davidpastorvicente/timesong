@@ -244,7 +244,7 @@ export default function GameSetup({ onStartGame, language }) {
     return (
       <div className="game-setup">
         <h1>
-          <img src={import.meta.env.BASE_URL + 'logo.svg'} alt="TimeSong" className="title-logo" />
+          <img src={import.meta.env.BASE_URL + 'logo.svg'} alt="ChronoTunes" className="title-logo" />
           {t.setupTitle}
         </h1>
         <p className="subtitle">{t.setupSubtitle}</p>

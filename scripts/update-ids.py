@@ -113,7 +113,7 @@ def main():
     ]
     
     print("=" * 60)
-    print("ID Updater for TimeSong Game")
+    print("ID Updater for ChronoTunes Game")
     print("Fetches YouTube IDs and Deezer IDs")
     if force_mode:
         print("🔄 FORCE MODE: Re-fetching all IDs")

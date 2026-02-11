@@ -1,5 +1,5 @@
 """
-Common utilities for TimeSong scripts
+Common utilities for ChronoTunes scripts
 
 Shared functions for fetching song metadata from various APIs:
 - YouTube Music (via ytmusicapi)

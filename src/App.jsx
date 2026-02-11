@@ -13,13 +13,13 @@ function App() {
   
   // Initialize language from localStorage or default to 'es'
   const [language, setLanguage] = useState(() => {
-    return localStorage.getItem('timesong_language') || 'es'
+    return localStorage.getItem('chronotunes_language') || 'es'
   })
 
   // Persist language preference
   const handleLanguageChange = (newLanguage) => {
     setLanguage(newLanguage)
-    localStorage.setItem('timesong_language', newLanguage)
+    localStorage.setItem('chronotunes_language', newLanguage)
   }
 
   const handleStartGame = (config) => {

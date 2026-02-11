@@ -150,8 +150,8 @@ export default function GameBoard({ gameConfig, language, overrideState }) {
     <div className="game-board">
       <div className="game-header">
         <h1>
-          <img src={import.meta.env.BASE_URL + 'logo.svg'} alt="TimeSong" className="title-logo" />
-          TimeSong
+          <img src={import.meta.env.BASE_URL + 'logo.svg'} alt="ChronoTunes" className="title-logo" />
+          ChronoTunes
         </h1>
       </div>
 

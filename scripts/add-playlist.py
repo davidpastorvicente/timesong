@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Add YouTube Music Playlist to TimeSong Database
+Add YouTube Music Playlist to ChronoTunes Database
 
 End-to-end script that:
 1. Fetches playlist tracks from YouTube Music
@@ -297,7 +297,7 @@ def main():
         print(f"❌ Invalid language: {language}. Use 'en' or 'es'")
         sys.exit(1)
     
-    print("🎵 YOUTUBE PLAYLIST TO TIMESONG CONVERTER\n")
+    print("🎵 YOUTUBE PLAYLIST TO CHRONOTUNES CONVERTER\n")
     print(f"Language: {'English' if language == 'en' else 'Spanish'}")
     if limit:
         print(f"Limit: Process until {limit} successful songs imported")

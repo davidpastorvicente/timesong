@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Check for duplicate songs in TimeSong database
+Check for duplicate songs in ChronoTunes database
 
 Checks for:
 - Duplicate Deezer IDs (same deezerId in multiple songs)
@@ -242,7 +242,7 @@ def main():
     # Check for --fix flag
     auto_fix = '--fix' in sys.argv
     
-    print("🔍 TIMESONG DUPLICATE CHECKER")
+    print("🔍 CHRONOTUNES DUPLICATE CHECKER")
     if auto_fix:
         print("   (Auto-fix mode: Will update files with correct IDs)")
     print()
