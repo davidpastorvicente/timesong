@@ -8,7 +8,7 @@ function SongSetSelector({ songSet, setSongSet, t }) {
   return (
     <div className="form-group">
       <label>{t.songSetLabel}</label>
-      <div className="team-selector">
+      <div className="player-selector">
         <button
           className={songSet === 'everything' ? 'active' : ''}
           onClick={() => setSongSet('everything')}
@@ -43,7 +43,7 @@ function WinningScoreSelector({ winningScore, setWinningScore, t }) {
   return (
     <div className="form-group">
       <label>{t.winningScoreLabel}</label>
-      <div className="team-selector">
+      <div className="player-selector">
         {[5, 10, 15, 20].map(num => (
           <button
             key={num}
@@ -65,29 +65,29 @@ export default function GameSetup({ onStartGame, language }) {
   const [multiplayerMode, setMultiplayerMode] = useState(''); // 'create', 'config', 'join', 'joined'
   const [gameCode, setGameCode] = useState('');
   const [joinCode, setJoinCode] = useState('');
-  const [myTeamName, setMyTeamName] = useState('');
-  const [hostTeamName, setHostTeamName] = useState(`${t.team || 'Team'} 1`);
+  const [myPlayerName, setMyPlayerName] = useState('');
+  const [hostPlayerName, setHostPlayerName] = useState(`${t.player} 1`);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
-  const [connectedTeams, setConnectedTeams] = useState([]);
+  const [connectedPlayers, setConnectedPlayers] = useState([]);
   
-  const [numTeams, setNumTeams] = useState(2);
-  const [teamNames, setTeamNames] = useState([`${t.team} 1`, `${t.team} 2`]);
+  const [numPlayers, setNumPlayers] = useState(2);
+  const [playerNames, setPlayerNames] = useState([`${t.player} 1`, `${t.player} 2`]);
   const [winningScore, setWinningScore] = useState(10);
   const [songSet, setSongSet] = useState('everything');
 
-  const handleNumTeamsChange = (num) => {
-    setNumTeams(num);
-    const newTeamNames = Array.from({ length: num }, (_, i) => 
-      teamNames[i] || `${t.team} ${i + 1}`
+  const handleNumPlayersChange = (num) => {
+    setNumPlayers(num);
+    const newPlayerNames = Array.from({ length: num }, (_, i) => 
+      playerNames[i] || `${t.player} ${i + 1}`
     );
-    setTeamNames(newTeamNames);
+    setPlayerNames(newPlayerNames);
   };
 
-  const handleTeamNameChange = (index, name) => {
-    const newTeamNames = [...teamNames];
-    newTeamNames[index] = name;
-    setTeamNames(newTeamNames);
+  const handlePlayerNameChange = (index, name) => {
+    const newPlayerNames = [...playerNames];
+    newPlayerNames[index] = name;
+    setPlayerNames(newPlayerNames);
   };
 
   // Handle back navigation
@@ -109,7 +109,7 @@ export default function GameSetup({ onStartGame, language }) {
   const handleStart = () => {
     onStartGame({
       mode: 'single',
-      teamNames,
+      playerNames,
       winningScore,
       songSet
     });
@@ -124,8 +124,8 @@ export default function GameSetup({ onStartGame, language }) {
   // Create multiplayer game with host settings
   const handleCreateGame = async () => {
     try {
-      if (!hostTeamName.trim()) {
-        setError(t.enterTeamName || 'Please enter your team name');
+      if (!hostPlayerName.trim()) {
+        setError(t.playerNamePlaceholder);
         return;
       }
       
@@ -135,20 +135,20 @@ export default function GameSetup({ onStartGame, language }) {
       
       // Initialize with host settings
       const gameSettings = {
-        teamNames: [], // Teams join dynamically
+        playerNames: [], // Players join dynamically
         winningScore,
         songSet
       };
       
       await createGameSession(code, gameSettings);
       
-      // Host joins as Team 1 immediately
-      await joinGameSession(code, hostTeamName.trim(), deviceId);
+      // Host joins as Player 1 immediately
+      await joinGameSession(code, hostPlayerName.trim(), deviceId);
       
-      // Subscribe to game updates to see joining teams
+      // Subscribe to game updates to see joining players
       subscribeToGame(code, (gameData) => {
-        if (gameData && gameData.teams) {
-          setConnectedTeams(gameData.teams);
+        if (gameData && gameData.players) {
+          setConnectedPlayers(gameData.players);
         }
       });
       
@@ -160,7 +160,7 @@ export default function GameSetup({ onStartGame, language }) {
     }
   };
 
-  // Join multiplayer game with team name
+  // Join multiplayer game with player name
   const handleJoinGame = async () => {
     try {
       const code = joinCode.toUpperCase().trim();
@@ -169,8 +169,8 @@ export default function GameSetup({ onStartGame, language }) {
         return;
       }
       
-      if (!myTeamName.trim()) {
-        setError(t.enterTeamName || 'Please enter your team name');
+      if (!myPlayerName.trim()) {
+        setError(t.playerNamePlaceholder);
         return;
       }
       
@@ -180,26 +180,26 @@ export default function GameSetup({ onStartGame, language }) {
         return;
       }
       
-      // Join as a new team
+      // Join as a new player
       const deviceId = getDeviceId();
-      const teamIndex = await joinGameSession(code, myTeamName.trim(), deviceId);
+      const playerIndex = await joinGameSession(code, myPlayerName.trim(), deviceId);
       
       // Subscribe to game to wait for start
       subscribeToGame(code, (gameData) => {
-        if (gameData && gameData.teams) {
-          setConnectedTeams(gameData.teams);
+        if (gameData && gameData.players) {
+          setConnectedPlayers(gameData.players);
         }
         
         // Check if game has started
         if (gameData && gameData.state && gameData.state.gamePhase === 'playing') {
-          const finalTeamNames = gameData.teams.map(t => t.name);
+          const finalPlayerNames = gameData.players.map(t => t.name);
           onStartGame({
             mode: 'multi',
-            teamNames: finalTeamNames,
+            playerNames: finalPlayerNames,
             winningScore: gameData.settings.winningScore,
             songSet: gameData.settings.songSet,
             gameCode: code,
-            myTeamIndex: teamIndex,
+            myPlayerIndex: playerIndex,
             deviceId,
             isHost: false
           });
@@ -219,15 +219,15 @@ export default function GameSetup({ onStartGame, language }) {
   const handleStartMultiplayerGame = () => {
     const deviceId = getDeviceId();
     
-    // Host is already joined as Team 1 (index 0)
+    // Host is already joined as Player 1 (index 0)
     // Just start the game
     onStartGame({
       mode: 'multi',
-      teamNames: connectedTeams.map(t => t.name),
+      playerNames: connectedPlayers.map(t => t.name),
       winningScore,
       songSet,
       gameCode,
-      myTeamIndex: 0, // Host is Team 1 (index 0)
+      myPlayerIndex: 0, // Host is Player 1 (index 0)
       deviceId,
       isHost: true
     });
@@ -281,13 +281,13 @@ export default function GameSetup({ onStartGame, language }) {
           {gameMode === 'single' && (
             <>
               <div className="form-group">
-                <label>{t.teamsNumber}</label>
-                <div className="team-selector">
+                <label>{t.playersNumber}</label>
+                <div className="player-selector">
                   {[2, 3, 4, 5, 6].map(num => (
                     <button
                       key={num}
-                      className={numTeams === num ? 'active' : ''}
-                      onClick={() => handleNumTeamsChange(num)}
+                      className={numPlayers === num ? 'active' : ''}
+                      onClick={() => handleNumPlayersChange(num)}
                     >
                       {num}
                     </button>
@@ -296,14 +296,14 @@ export default function GameSetup({ onStartGame, language }) {
               </div>
 
               <div className="form-group">
-                <label>{t.teamNames}</label>
-                <div className="team-names">
-                  {teamNames.map((name, index) => (
+                <label>{t.playerNames}</label>
+                <div className="player-names">
+                  {playerNames.map((name, index) => (
                     <input
                       key={index}
                       type="text"
                       value={name}
-                      onChange={(e) => handleTeamNameChange(index, e.target.value)}
+                      onChange={(e) => handlePlayerNameChange(index, e.target.value)}
                     />
                   ))}
                 </div>
@@ -344,12 +344,12 @@ export default function GameSetup({ onStartGame, language }) {
           {gameMode === 'multi' && multiplayerMode === 'config' && (
             <>
               <div className="form-group">
-                <label>{t.hostTeamName || 'Your Team Name'}</label>
+                <label>{t.playerNameLabel}</label>
                 <input
                   type="text"
-                  placeholder={t.teamNamePlaceholder}
-                  value={hostTeamName}
-                  onChange={(e) => setHostTeamName(e.target.value)}
+                  placeholder={t.playerNamePlaceholder}
+                  value={hostPlayerName}
+                  onChange={(e) => setHostPlayerName(e.target.value)}
                   maxLength={20}
                 />
               </div>
@@ -361,7 +361,7 @@ export default function GameSetup({ onStartGame, language }) {
               {error && <p className="error">{error}</p>}
 
               <button className="start-button" onClick={handleCreateGame}>
-                {t.createGameButton || t.createGame}
+                {t.createGame}
               </button>
             </>
           )}
@@ -389,13 +389,13 @@ export default function GameSetup({ onStartGame, language }) {
           
           <div className="players-status">
             <h3>{t.waitingForPlayers}</h3>
-            <div className="team-list">
-              {connectedTeams.length === 0 ? (
-                <p className="waiting-message">{t.noPlayersYet || 'Waiting for players to join...'}</p>
+            <div className="player-list">
+              {connectedPlayers.length === 0 ? (
+                <p className="waiting-message">{t.waitingForPlayers}</p>
               ) : (
-                connectedTeams.map((team, index) => (
-                  <div key={index} className="team-item connected">
-                    <span>{team.name}</span>
+                connectedPlayers.map((player, index) => (
+                  <div key={index} className="player-item connected">
+                    <span>{player.name}</span>
                     <span className="status">✓</span>
                   </div>
                 ))
@@ -406,7 +406,7 @@ export default function GameSetup({ onStartGame, language }) {
           <button 
             className="start-button" 
             onClick={handleStartMultiplayerGame}
-            disabled={connectedTeams.length < 2}
+            disabled={connectedPlayers.length < 2}
           >
             {t.startGameButton}
           </button>
@@ -415,7 +415,7 @@ export default function GameSetup({ onStartGame, language }) {
     );
   }
 
-  // Show join form (enter code + team name)
+  // Show join form (enter code + player name)
   if (multiplayerMode === 'join') {
     return (
       <div className="game-setup">
@@ -425,7 +425,7 @@ export default function GameSetup({ onStartGame, language }) {
             ←
           </button>
           <div className="form-group">
-            <label>{t.gameCodeLabel || 'Game Code'}</label>
+            <label>{t.gameCodeLabel}</label>
             <input
               type="text"
               placeholder={t.gameCodePlaceholder}
@@ -437,12 +437,12 @@ export default function GameSetup({ onStartGame, language }) {
           </div>
           
           <div className="form-group">
-            <label>{t.teamNameLabel || 'Your Team Name'}</label>
+            <label>{t.playerNameLabel}</label>
             <input
               type="text"
-              placeholder={t.teamNamePlaceholder || 'Enter your team name'}
-              value={myTeamName}
-              onChange={(e) => setMyTeamName(e.target.value)}
+              placeholder={t.playerNamePlaceholder}
+              value={myPlayerName}
+              onChange={(e) => setMyPlayerName(e.target.value)}
               maxLength={20}
             />
           </div>
@@ -450,7 +450,7 @@ export default function GameSetup({ onStartGame, language }) {
           {error && <p className="error">{error}</p>}
           
           <button className="start-button" onClick={handleJoinGame}>
-            {t.joinGameButton}
+            {t.joinGame}
           </button>
         </div>
       </div>
@@ -473,10 +473,10 @@ export default function GameSetup({ onStartGame, language }) {
           
           <div className="players-status">
             <h3>{t.waitingForHost || 'Waiting for host to start...'}</h3>
-            <div className="team-list">
-              {connectedTeams.map((team, index) => (
-                <div key={index} className="team-item connected">
-                  <span>{team.name}</span>
+            <div className="player-list">
+              {connectedPlayers.map((player, index) => (
+                <div key={index} className="player-item connected">
+                  <span>{player.name}</span>
                   <span className="status">✓</span>
                 </div>
               ))}

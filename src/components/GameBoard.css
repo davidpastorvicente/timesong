@@ -87,7 +87,7 @@
   padding-bottom: 0.5rem;
 }
 
-.team-timeline-container {
+.player-timeline-container {
   min-height: 250px;
   padding: 1rem;
   border-radius: 8px;
@@ -108,13 +108,13 @@
   }
 }
 
-.team-timeline-container.active {
+.player-timeline-container.active {
   border-color: var(--primary);
   background: linear-gradient(135deg, rgba(233, 69, 96, 0.05) 0%, rgba(15, 52, 96, 0.05) 100%);
   box-shadow: 0 2px 8px var(--shadow);
 }
 
-.team-timeline-header {
+.player-timeline-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -123,13 +123,13 @@
   border-bottom: 1px solid #dee2e6;
 }
 
-.team-timeline-header h4 {
+.player-timeline-header h4 {
   margin: 0;
   color: var(--primary-dark);
   font-size: 1.2rem;
 }
 
-.team-score {
+.player-score {
   color: var(--primary);
   font-weight: bold;
   font-size: 1rem;

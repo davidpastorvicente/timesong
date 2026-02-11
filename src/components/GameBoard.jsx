@@ -9,26 +9,26 @@ import './GameBoard.css';
 
 export default function GameBoard({ gameConfig, language, overrideState }) {
   // Extract config - handle both single and multiplayer mode
-  const { teamNames, winningScore, songSet, mode, myTeamIndex } = gameConfig;
+  const { playerNames, winningScore, songSet, mode, myPlayerIndex } = gameConfig;
   
-  const [currentTeamIndex, setCurrentTeamIndex] = useState(overrideState?.currentTeamIndex ?? 0);
+  const [currentPlayerIndex, setCurrentPlayerIndex] = useState(overrideState?.currentPlayerIndex ?? 0);
   const [currentSong, setCurrentSong] = useState(overrideState?.currentSong ?? null);
-  const [teamTimelines, setTeamTimelines] = useState(
-    overrideState?.teamTimelines ?? teamNames.map(() => [])
+  const [playerTimelines, setPlayerTimelines] = useState(
+    overrideState?.playerTimelines ?? playerNames.map(() => [])
   );
   const [availableSongs, setAvailableSongs] = useState([]);
   const [usedSongIds, setUsedSongIds] = useState([]);
   const [gamePhase, setGamePhase] = useState(overrideState?.gamePhase ?? 'playing');
   const [lastPlacement, setLastPlacement] = useState(overrideState?.lastPlacement ?? null);
-  const [scores, setScores] = useState(overrideState?.scores ?? teamNames.map(() => 0));
+  const [scores, setScores] = useState(overrideState?.scores ?? playerNames.map(() => 0));
   const [winner, setWinner] = useState(overrideState?.winner ?? null);
   const [animationKey, setAnimationKey] = useState(0);
   
   // Check if interactions should be disabled (for multiplayer waiting)
   const isDisabled = overrideState?.isDisabled ?? false;
   
-  // Get the actual current team index from overrideState if available
-  const actualCurrentTeamIndex = overrideState?.actualCurrentTeamIndex ?? currentTeamIndex;
+  // Get the actual current player index from overrideState if available
+  const actualCurrentPlayerIndex = overrideState?.actualCurrentPlayerIndex ?? currentPlayerIndex;
 
   const t = translations[language];
   
@@ -38,11 +38,11 @@ export default function GameBoard({ gameConfig, language, overrideState }) {
     if (overrideState) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       if (overrideState.currentSong) setCurrentSong(overrideState.currentSong);
-      if (overrideState.teamTimelines) setTeamTimelines(overrideState.teamTimelines);
+      if (overrideState.playerTimelines) setPlayerTimelines(overrideState.playerTimelines);
       if (overrideState.scores) setScores(overrideState.scores);
       if (overrideState.gamePhase) setGamePhase(overrideState.gamePhase);
       if (overrideState.lastPlacement !== undefined) setLastPlacement(overrideState.lastPlacement);
-      if (overrideState.currentTeamIndex !== undefined) setCurrentTeamIndex(overrideState.currentTeamIndex);
+      if (overrideState.currentPlayerIndex !== undefined) setCurrentPlayerIndex(overrideState.currentPlayerIndex);
       if (overrideState.winner !== undefined) setWinner(overrideState.winner);
     }
   }, [overrideState]);
@@ -89,7 +89,7 @@ export default function GameBoard({ gameConfig, language, overrideState }) {
     }
     
     // Single-device mode logic
-    const currentTimeline = teamTimelines[currentTeamIndex];
+    const currentTimeline = playerTimelines[currentPlayerIndex];
     const newTimeline = [...currentTimeline];
     
     newTimeline.splice(position, 0, currentSong);
@@ -97,18 +97,18 @@ export default function GameBoard({ gameConfig, language, overrideState }) {
     const isCorrect = checkIfCorrectPlacement(newTimeline);
     
     if (isCorrect) {
-      const updatedTimelines = [...teamTimelines];
-      updatedTimelines[currentTeamIndex] = newTimeline;
-      setTeamTimelines(updatedTimelines);
+      const updatedTimelines = [...playerTimelines];
+      updatedTimelines[currentPlayerIndex] = newTimeline;
+      setPlayerTimelines(updatedTimelines);
       
       const newScores = [...scores];
-      newScores[currentTeamIndex]++;
+      newScores[currentPlayerIndex]++;
       setScores(newScores);
       
       setLastPlacement({ correct: true, position });
       
-      if (newScores[currentTeamIndex] >= winningScore) {
-        setWinner(currentTeamIndex);
+      if (newScores[currentPlayerIndex] >= winningScore) {
+        setWinner(currentPlayerIndex);
         setGamePhase('gameOver');
         return;
       }
@@ -140,12 +140,12 @@ export default function GameBoard({ gameConfig, language, overrideState }) {
     setGamePhase('loading');
     setAnimationKey(prev => prev + 1); // Trigger re-render for animation
     
-    const nextTeamIndex = (currentTeamIndex + 1) % teamNames.length;
-    setCurrentTeamIndex(nextTeamIndex);
+    const nextPlayerIndex = (currentPlayerIndex + 1) % playerNames.length;
+    setCurrentPlayerIndex(nextPlayerIndex);
     await drawNewSong(availableSongs, usedSongIds);
   };
 
-  const currentTimeline = teamTimelines[currentTeamIndex];
+  const currentTimeline = playerTimelines[currentPlayerIndex];
   return (
     <div className="game-board">
       <div className="game-header">
@@ -159,10 +159,10 @@ export default function GameBoard({ gameConfig, language, overrideState }) {
         <div className="game-over">
           <div className="winner-announcement">
             <h2>🎉 {t.gameOver} 🎉</h2>
-            <h1>{t.winner}: {teamNames[winner]}</h1>
+            <h1>{t.winner}: {playerNames[winner]}</h1>
             <div className="final-timeline">
               <h3>{t.finalTimeline}</h3>
-              <Timeline timeline={teamTimelines[winner]} showYears={true} language={language} />
+              <Timeline timeline={playerTimelines[winner]} showYears={true} language={language} />
             </div>
             <button className="play-again-button" onClick={() => window.location.reload()}>
               {t.playAgain}
@@ -228,30 +228,30 @@ export default function GameBoard({ gameConfig, language, overrideState }) {
               )}
             </div>
 
-            {/* Right side: All Team Timelines */}
+            {/* Right side: All Player Timelines */}
             <div className="timelines-section" key={animationKey}>
               <h3>{t.timeline}s:</h3>
-              {/* In multiplayer, keep my team on top; in single-device, reorder to show current team first */}
-              {mode === 'multi' && myTeamIndex !== null && myTeamIndex !== undefined ? (
-                // Multiplayer mode: My team first, then others
-                teamNames.map((_, index) => {
-                  // Calculate display order: my team first, then others in sequence
-                  const displayIndex = index === myTeamIndex ? 0 : (index < myTeamIndex ? index + 1 : index);
+              {/* In multiplayer, keep my player on top; in single-device, reorder to show current player first */}
+              {mode === 'multi' && myPlayerIndex !== null && myPlayerIndex !== undefined ? (
+                // Multiplayer mode: My player first, then others
+                playerNames.map((_, index) => {
+                  // Calculate display order: my player first, then others in sequence
+                  const displayIndex = index === myPlayerIndex ? 0 : (index < myPlayerIndex ? index + 1 : index);
                   return (
                     <div 
                       key={`${animationKey}-${index}`}
-                      className={`team-timeline-container ${index === actualCurrentTeamIndex ? 'active' : ''}`}
+                      className={`player-timeline-container ${index === actualCurrentPlayerIndex ? 'active' : ''}`}
                       style={{ 
                         animationDelay: `${displayIndex * 0.1}s`,
                         order: displayIndex
                       }}
                     >
-                      <div className="team-timeline-header">
-                        <h4>{teamNames[index]}</h4>
-                        <span className="team-score">{scores[index]} / {winningScore}</span>
+                      <div className="player-timeline-header">
+                        <h4>{playerNames[index]}</h4>
+                        <span className="player-score">{scores[index]} / {winningScore}</span>
                       </div>
                       <Timeline 
-                        timeline={teamTimelines[index]} 
+                        timeline={playerTimelines[index]} 
                         showYears={true} 
                         language={language} 
                       />
@@ -259,24 +259,24 @@ export default function GameBoard({ gameConfig, language, overrideState }) {
                   );
                 })
               ) : (
-                // Single-device mode: Reorder to put current team first
-                [...Array(teamNames.length)].map((_, offset) => {
-                  const index = (currentTeamIndex + offset) % teamNames.length;
+                // Single-device mode: Reorder to put current player first
+                [...Array(playerNames.length)].map((_, offset) => {
+                  const index = (currentPlayerIndex + offset) % playerNames.length;
                   return (
                     <div 
                       key={`${animationKey}-${index}`}
-                      className={`team-timeline-container ${index === currentTeamIndex ? 'active' : ''}`}
+                      className={`player-timeline-container ${index === currentPlayerIndex ? 'active' : ''}`}
                       style={{ 
                         animationDelay: `${offset * 0.1}s`,
                         order: offset
                       }}
                     >
-                      <div className="team-timeline-header">
-                        <h4>{teamNames[index]}</h4>
-                        <span className="team-score">{scores[index]} / {winningScore}</span>
+                      <div className="player-timeline-header">
+                        <h4>{playerNames[index]}</h4>
+                        <span className="player-score">{scores[index]} / {winningScore}</span>
                       </div>
                       <Timeline 
-                        timeline={teamTimelines[index]} 
+                        timeline={playerTimelines[index]} 
                         showYears={true} 
                         language={language} 
                       />

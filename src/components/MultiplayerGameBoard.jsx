@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { subscribeToGame, updateGameState, updateTeamData, setHostDevice } from '../services/gameSession';
+import { subscribeToGame, updateGameState, updatePlayerData, setHostDevice } from '../services/gameSession';
 import { songSets } from '../data/songs';
 import { translations } from '../translations';
 import { fetchDeezerPreview } from '../utils/deezer';
@@ -7,7 +7,7 @@ import GameBoard from './GameBoard';
 import './MultiplayerGameBoard.css';
 
 export default function MultiplayerGameBoard({ gameConfig, language, onTurnIndicatorChange }) {
-  const { mode, gameCode, myTeamIndex, deviceId, isHost } = gameConfig;
+  const { mode, gameCode, myPlayerIndex, deviceId, isHost } = gameConfig;
   const [gameData, setGameData] = useState(null);
   const [isMyTurn, setIsMyTurn] = useState(false);
   const initializingRef = useRef(false);
@@ -33,7 +33,7 @@ export default function MultiplayerGameBoard({ gameConfig, language, onTurnIndic
       gamePhase: 'playing',
       currentSong: firstSong,
       usedSongIds: [song.youtubeId],
-      currentTeamIndex: 0
+      currentPlayerIndex: 0
     });
 
     await setHostDevice(gameCode, deviceId);
@@ -52,8 +52,8 @@ export default function MultiplayerGameBoard({ gameConfig, language, onTurnIndic
       if (data) {
         setGameData(data);
         // Check if it's this device's turn
-        if (myTeamIndex !== null && myTeamIndex !== undefined) {
-          const isTurn = data.state.currentTeamIndex === myTeamIndex;
+        if (myPlayerIndex !== null && myPlayerIndex !== undefined) {
+          const isTurn = data.state.currentPlayerIndex === myPlayerIndex;
           setIsMyTurn(isTurn);
         } else {
           // Host spectator mode (shouldn't happen anymore)
@@ -65,7 +65,7 @@ export default function MultiplayerGameBoard({ gameConfig, language, onTurnIndic
     return () => {
       if (unsubscribe) unsubscribe();
     };
-  }, [mode, gameCode, myTeamIndex, isHost, initializeGame]);
+  }, [mode, gameCode, myPlayerIndex, isHost, initializeGame]);
 
   // Update turn indicator in parent
   useEffect(() => {
@@ -79,25 +79,25 @@ export default function MultiplayerGameBoard({ gameConfig, language, onTurnIndic
       return;
     }
 
-    const currentTeam = gameData.teams[gameData.state.currentTeamIndex];
+    const currentPlayer = gameData.players[gameData.state.currentPlayerIndex];
     const t = translations[language];
 
     const turnIndicatorElement = (
       <div className="turn-indicator">
-        {isMyTurn && myTeamIndex !== null ? (
+        {isMyTurn && myPlayerIndex !== null ? (
           <div className="turn-badge active">
             🎮 {t.yourTurn}
           </div>
         ) : (
           <div className="turn-badge waiting">
-            ⏳ {currentTeam?.name || '...'}
+            ⏳ {currentPlayer?.name || '...'}
           </div>
         )}
       </div>
     );
     
     if (onTurnIndicatorChange) onTurnIndicatorChange(turnIndicatorElement);
-  }, [mode, gameData, isMyTurn, myTeamIndex, language, onTurnIndicatorChange]);
+  }, [mode, gameData, isMyTurn, myPlayerIndex, language, onTurnIndicatorChange]);
 
   // Single-device mode - just render GameBoard directly
   if (mode === 'single') {
@@ -126,32 +126,32 @@ export default function MultiplayerGameBoard({ gameConfig, language, onTurnIndic
   );
 
   async function handlePlaceSong(timeline, score, isCorrect, position) {
-    // Update team data in Firebase
-    await updateTeamData(gameCode, myTeamIndex, {
+    // Update player data in Firebase
+    await updatePlayerData(gameCode, myPlayerIndex, {
       timeline: timeline,
       score: score
     });
     
-    // Check if this team won
+    // Check if this player won
     const { winningScore } = gameConfig;
     if (isCorrect && score >= winningScore) {
       // Winner! Update game state to game over
       await updateGameState(gameCode, {
         lastPlacement: { 
           correct: isCorrect, 
-          teamIndex: myTeamIndex,
+          playerIndex: myPlayerIndex,
           song: gameData.state.currentSong,
           position: position
         },
         gamePhase: 'gameOver',
-        winner: myTeamIndex
+        winner: myPlayerIndex
       });
     } else {
       // Update last placement and game phase to 'result' so all players see it
       await updateGameState(gameCode, {
         lastPlacement: { 
           correct: isCorrect, 
-          teamIndex: myTeamIndex,
+          playerIndex: myPlayerIndex,
           song: gameData.state.currentSong,
           position: position
         },
@@ -161,7 +161,7 @@ export default function MultiplayerGameBoard({ gameConfig, language, onTurnIndic
   }
 
   async function handleNextTurn(nextSong) {
-    const nextTeamIndex = (gameData.state.currentTeamIndex + 1) % gameData.teams.length;
+    const nextPlayerIndex = (gameData.state.currentPlayerIndex + 1) % gameData.players.length;
     
     // Set loading phase first before changing turn/song
     await updateGameState(gameCode, {
@@ -172,7 +172,7 @@ export default function MultiplayerGameBoard({ gameConfig, language, onTurnIndic
     await new Promise(resolve => setTimeout(resolve, 100));
     
     await updateGameState(gameCode, {
-      currentTeamIndex: nextTeamIndex,
+      currentPlayerIndex: nextPlayerIndex,
       currentSong: nextSong,
       usedSongIds: [...gameData.state.usedSongIds, nextSong.youtubeId],
       gamePhase: 'playing'
@@ -182,15 +182,15 @@ export default function MultiplayerGameBoard({ gameConfig, language, onTurnIndic
 
 // Component that handles the active turn gameplay
 function MultiplayerGameBoardActive({ gameConfig, gameData, language, onPlaceSong, onNextTurn, isMyTurn }) {
-  const { songSet, winningScore, myTeamIndex } = gameConfig;
+  const { songSet, winningScore, myPlayerIndex } = gameConfig;
   // Use gamePhase from Firebase instead of local state so all players see the same phase
   const gamePhase = gameData.state.gamePhase || 'playing';
   const lastPlacement = gameData.state.lastPlacement || null;
 
   const currentSong = gameData.state.currentSong;
-  const myTeam = gameData.teams[myTeamIndex] || {};
-  const myTimeline = myTeam.timeline || [];
-  const myScore = myTeam.score || 0;
+  const myPlayer = gameData.players[myPlayerIndex] || {};
+  const myTimeline = myPlayer.timeline || [];
+  const myScore = myPlayer.score || 0;
 
   const handlePlacement = async (position) => {
     if (!isMyTurn) return; // Prevent placement if not my turn
@@ -247,19 +247,19 @@ function MultiplayerGameBoardActive({ gameConfig, gameData, language, onPlaceSon
     <GameBoard 
       gameConfig={{
         mode: 'multi', // Pass multi mode to prevent reordering
-        teamNames: gameData.teams.map(t => t.name),
+        playerNames: gameData.players.map(t => t.name),
         winningScore,
         songSet,
-        myTeamIndex // Pass myTeamIndex to keep my team on top
+        myPlayerIndex // Pass myPlayerIndex to keep my player on top
       }}
       language={language}
       // Override internal state with Firebase data
       overrideState={{
         currentSong,
-        currentTeamIndex: myTeamIndex, // This is for my current position
-        actualCurrentTeamIndex: gameData.state.currentTeamIndex, // This is the actual active team
-        teamTimelines: gameData.teams.map(t => t.timeline || []),
-        scores: gameData.teams.map(t => t.score || 0),
+        currentPlayerIndex: myPlayerIndex, // This is for my current position
+        actualCurrentPlayerIndex: gameData.state.currentPlayerIndex, // This is the actual active player
+        playerTimelines: gameData.players.map(t => t.timeline || []),
+        scores: gameData.players.map(t => t.score || 0),
         gamePhase,
         lastPlacement,
         winner: gameData.state.winner,

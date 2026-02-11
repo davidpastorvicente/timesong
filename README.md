@@ -2,17 +2,17 @@
 
 # ChronoTunes
 
-A music guessing game where teams build timelines by placing songs in chronological order.
+A music guessing game where players build timelines by placing songs in chronological order.
 
 ![ChronoTunes Logo](screenshots/light-en.png)
 
 ## 🎮 How to Play
 
-1. **Setup Teams**: Choose 2-6 teams and set a winning score (5, 10, 15, or 20 songs)
-2. **Listen**: Each turn, a team hears a mystery song
+1. **Setup Players**: Choose 2-6 players and set a winning score (5, 10, 15, or 20 songs)
+2. **Listen**: Each turn, a player hears a mystery song
 3. **Guess**: Place the song in your timeline (before, between, or after existing songs)
 4. **Build**: Correct placements add the song to your timeline
-5. **Win**: First team to reach the target number of songs wins!
+5. **Win**: First player to reach the target number of songs wins!
 
 ## 🎵 Song Library
 
@@ -59,7 +59,7 @@ npm run dev
 
 ## 📝 Features
 
-- ✅ Turn-based gameplay for multiple teams
+- ✅ Turn-based gameplay for multiple players
 - ✅ **Single-device mode** (hot-seat multiplayer)
 - ✅ **Multi-device mode** (real-time sync via Firebase)
 - ✅ Configurable winning conditions
@@ -182,7 +182,7 @@ You can also add songs with IDs directly:
 ```
 src/
 ├── components/
-│   ├── GameSetup.jsx         # Team configuration
+│   ├── GameSetup.jsx         # Player configuration
 │   ├── GameBoard.jsx         # Main game logic
 │   ├── Timeline.jsx          # Timeline display
 │   ├── SongPlayer.jsx        # Audio player

@@ -23,8 +23,8 @@ function App() {
   }
 
   const handleStartGame = (config) => {
-    // Config contains: mode, teamNames, winningScore, songSet
-    // For multiplayer: also gameCode, myTeamIndex, deviceId, isHost
+    // Config contains: mode, playerNames, winningScore, songSet
+    // For multiplayer: also gameCode, myPlayerIndex, deviceId, isHost
     setGameConfig(config)
     setGameStarted(true)
   }

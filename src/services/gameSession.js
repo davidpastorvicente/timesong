@@ -18,13 +18,13 @@ export async function createGameSession(gameCode, gameSettings) {
   await set(gameRef, {
     settings: gameSettings,
     state: {
-      currentTeamIndex: 0,
+      currentPlayerIndex: 0,
       gamePhase: 'waiting',
       currentSong: null,
       usedSongIds: [],
       lastPlacement: null
     },
-    teams: gameSettings.teamNames.map((name) => ({
+    players: gameSettings.playerNames.map((name) => ({
       name,
       score: 0,
       timeline: [],
@@ -38,29 +38,29 @@ export async function createGameSession(gameCode, gameSettings) {
   return gameCode;
 }
 
-// Join an existing game session with team name
-export async function joinGameSession(gameCode, teamName, deviceId) {
-  const teamsRef = ref(database, `games/${gameCode}/teams`);
+// Join an existing game session with player name
+export async function joinGameSession(gameCode, playerName, deviceId) {
+  const playersRef = ref(database, `games/${gameCode}/players`);
   
-  // Get current teams
-  const snapshot = await get(teamsRef);
-  const teams = snapshot.exists() ? snapshot.val() : [];
+  // Get current players
+  const snapshot = await get(playersRef);
+  const players = snapshot.exists() ? snapshot.val() : [];
   
-  // Add new team
-  const newTeam = {
-    name: teamName,
+  // Add new player
+  const newPlayer = {
+    name: playerName,
     score: 0,
     timeline: [],
     connected: true,
     deviceId: deviceId
   };
   
-  teams.push(newTeam);
-  const teamIndex = teams.length - 1;
+  players.push(newPlayer);
+  const playerIndex = players.length - 1;
   
-  await set(teamsRef, teams);
+  await set(playersRef, players);
   
-  return teamIndex;
+  return playerIndex;
 }
 
 // Check if game code exists
@@ -88,10 +88,10 @@ export async function updateGameState(gameCode, stateUpdates) {
   await update(stateRef, stateUpdates);
 }
 
-// Update team data
-export async function updateTeamData(gameCode, teamIndex, teamData) {
-  const teamRef = ref(database, `games/${gameCode}/teams/${teamIndex}`);
-  await update(teamRef, teamData);
+// Update player data
+export async function updatePlayerData(gameCode, playerIndex, playerData) {
+  const playerRef = ref(database, `games/${gameCode}/players/${playerIndex}`);
+  await update(playerRef, playerData);
 }
 
 // Clean up game session
