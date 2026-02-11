@@ -203,6 +203,9 @@ export default function GameBoard({ gameConfig, language, overrideState }) {
               {gamePhase === 'result' && lastPlacement && (
                 <>
                   <div className={`result-message ${lastPlacement.correct ? 'correct' : 'incorrect'}`}>
+                    <div className="result-icon">
+                      {lastPlacement.correct ? '✓' : '✗'}
+                    </div>
                     {currentSong.albumCover && (
                       <div className="result-album-cover">
                         <img src={currentSong.albumCover} alt="Album cover" />

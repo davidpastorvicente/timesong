@@ -155,6 +155,17 @@
   border-radius: 12px;
   color: white;
   text-align: center;
+  position: relative;
+}
+
+.result-icon {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  font-size: 2.5rem;
+  font-weight: bold;
+  line-height: 1;
+  text-shadow: rgba(0, 0, 0, 0.8) 2px 2px 4px;
 }
 
 .result-message.correct {
