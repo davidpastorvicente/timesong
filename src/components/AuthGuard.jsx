@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { translations } from '../translations';
 import LanguageSelector from './LanguageSelector';
 import ThemeToggle from './ThemeToggle';
+import { useTheme } from '../hooks/useTheme';
 import './AuthGuard.css';
 
 export default function AuthGuard({ children, language, onLanguageChange }) {
@@ -12,6 +13,9 @@ export default function AuthGuard({ children, language, onLanguageChange }) {
   if (disableAuth) {
     return children;
   }
+  
+  // Get current theme
+  const theme = useTheme();
   
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -55,7 +59,7 @@ export default function AuthGuard({ children, language, onLanguageChange }) {
       </div>
       <div className="auth-box">
         <h1>
-          <img src={import.meta.env.BASE_URL + 'logo.svg'} alt="ChronoTunes" className="title-logo" />
+          <img src={import.meta.env.BASE_URL + (theme === 'dark' ? 'logo-dark.svg' : 'logo.svg')} alt="ChronoTunes" className="title-logo" />
           {t.authTitle}
         </h1>
         <p>{t.authSubtitle}</p>

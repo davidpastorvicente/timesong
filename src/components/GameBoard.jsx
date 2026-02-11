@@ -5,11 +5,15 @@ import { fetchDeezerPreview } from '../utils/deezer';
 import Timeline from './Timeline';
 import SongPlayer from './SongPlayer';
 import PlacementButtons from './PlacementButtons';
+import { useTheme } from '../hooks/useTheme';
 import './GameBoard.css';
 
 export default function GameBoard({ gameConfig, language, overrideState }) {
   // Extract config - handle both single and multiplayer mode
   const { playerNames, winningScore, songSet, mode, myPlayerIndex } = gameConfig;
+  
+  // Get current theme
+  const theme = useTheme();
   
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(overrideState?.currentPlayerIndex ?? 0);
   const [currentSong, setCurrentSong] = useState(overrideState?.currentSong ?? null);
@@ -150,7 +154,7 @@ export default function GameBoard({ gameConfig, language, overrideState }) {
     <div className="game-board">
       <div className="game-header">
         <h1>
-          <img src={import.meta.env.BASE_URL + 'logo.svg'} alt="ChronoTunes" className="title-logo" />
+          <img src={import.meta.env.BASE_URL + (theme === 'dark' ? 'logo-dark.svg' : 'logo.svg')} alt="ChronoTunes" className="title-logo" />
           ChronoTunes
         </h1>
       </div>

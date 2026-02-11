@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { translations } from '../translations';
 import { generateGameCode, createGameSession, checkGameExists, joinGameSession, getDeviceId, subscribeToGame } from '../services/gameSession';
+import { useTheme } from '../hooks/useTheme';
 import './GameSetup.css';
 
 // Reusable component for song set selector
@@ -60,6 +61,9 @@ function WinningScoreSelector({ winningScore, setWinningScore, t }) {
 
 export default function GameSetup({ onStartGame, language }) {
   const t = translations[language];
+  
+  // Get current theme
+  const theme = useTheme();
   
   const [gameMode, setGameMode] = useState(''); // 'single' or 'multi'
   const [multiplayerMode, setMultiplayerMode] = useState(''); // 'create', 'config', 'join', 'joined'
@@ -244,7 +248,7 @@ export default function GameSetup({ onStartGame, language }) {
     return (
       <div className="game-setup">
         <h1>
-          <img src={import.meta.env.BASE_URL + 'logo.svg'} alt="ChronoTunes" className="title-logo" />
+          <img src={import.meta.env.BASE_URL + (theme === 'dark' ? 'logo-dark.svg' : 'logo.svg')} alt="ChronoTunes" className="title-logo" />
           {t.setupTitle}
         </h1>
         <p className="subtitle">{t.setupSubtitle}</p>

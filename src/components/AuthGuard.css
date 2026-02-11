@@ -38,7 +38,7 @@
 .auth-box .title-logo {
   width: 48px;
   height: 48px;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
 }
 
 .auth-box > p {
