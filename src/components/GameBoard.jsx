@@ -179,7 +179,7 @@ export default function GameBoard({ gameConfig, language, overrideState }) {
             <h1>{t.winner}: {playerNames[winner]}</h1>
             <div className="final-timeline">
               <h3>{t.finalTimeline}</h3>
-              <Timeline timeline={playerTimelines[winner]} language={language} playerId={winner} />
+              <Timeline timeline={playerTimelines[winner]} language={language} playerId={winner} category={category} />
             </div>
             <button className="play-again-button" onClick={() => window.location.reload()}>
               {t.playAgain}
@@ -285,7 +285,7 @@ export default function GameBoard({ gameConfig, language, overrideState }) {
                         <h4>{playerNames[index]}</h4>
                         <span className="player-score">{scores[index]} / {winningScore}</span>
                       </div>
-                      <Timeline timeline={playerTimelines[index]} language={language} playerId={index} />
+                      <Timeline timeline={playerTimelines[index]} language={language} playerId={index} category={category} />
                     </div>
                   );
                 })
@@ -306,7 +306,7 @@ export default function GameBoard({ gameConfig, language, overrideState }) {
                         <h4>{playerNames[index]}</h4>
                         <span className="player-score">{scores[index]} / {winningScore}</span>
                       </div>
-                      <Timeline timeline={playerTimelines[index]} language={language} playerId={index} />
+                      <Timeline timeline={playerTimelines[index]} language={language} playerId={index} category={category} />
                     </div>
                   );
                 })

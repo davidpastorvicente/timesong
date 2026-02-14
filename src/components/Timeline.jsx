@@ -75,7 +75,7 @@ function getColorForPlayerItem(playerId, item) {
   return playerColors.get(itemKey);
 }
 
-export default function Timeline({ timeline = [], language, playerId = 0}) {
+export default function Timeline({ timeline = [], language, playerId = 0, category }) {
   const t = translations[language];
 
   if (!timeline || timeline.length === 0) {
@@ -107,6 +107,19 @@ export default function Timeline({ timeline = [], language, playerId = 0}) {
           <div className="year-group-container">
             {group.map((item, itemIndex) => {
               const colors = getColorForPlayerItem(playerId, item);
+              
+              // Show icon only in "all" category to indicate media type
+              let icon = '';
+              if (category === 'all') {
+                if (item.artist) {
+                  icon = '🎵'; // Song
+                } else if (item.type === 'movie') {
+                  icon = '🎬'; // Movie
+                } else if (item.type === 'tvshow') {
+                  icon = '📺'; // TV Show
+                }
+              }
+              
               return (
                 <div
                   key={itemIndex}
@@ -115,6 +128,7 @@ export default function Timeline({ timeline = [], language, playerId = 0}) {
                     background: `linear-gradient(135deg, ${colors.start} 0%, ${colors.end} 100%)`
                   }}
                 >
+                  {icon && <div className="item-type-icon">{icon}</div>}
                   <div className="item-info">
                     <div className="item-title">{item.title}</div>
                     {item.artist && (
