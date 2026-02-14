@@ -2,39 +2,56 @@
 
 # ChronoTunes
 
-A music guessing game where players build timelines by placing songs in chronological order.
+A timeline guessing game where players build chronological timelines by placing items in order. Play with songs, movies, or TV shows!
 
 ![ChronoTunes Logo](screenshots/light-en.png)
 
 ## 🎮 How to Play
 
-1. **Setup Players**: Choose 2-6 players and set a winning score (5, 10, 15, or 20 songs)
-2. **Listen**: Each turn, a player hears a mystery song
-3. **Guess**: Place the song in your timeline (before, between, or after existing songs)
-4. **Build**: Correct placements add the song to your timeline
-5. **Win**: First player to reach the target number of songs wins!
+1. **Choose Category**: Select between Songs or Movies/TV Shows
+2. **Setup Players**: Choose 2-6 players and set a winning score (5, 10, 15, or 20 items)
+3. **Experience**: Each turn, a player experiences a mystery item (song audio or movie/show image)
+4. **Guess**: Place the item in your timeline by its year (before, between, or after existing items)
+5. **Build**: Correct placements add the item to your timeline
+6. **Win**: First player to reach the target number of items wins!
 
-## 🎵 Song Library
+## 📚 Content Library
 
-The game includes **368 curated songs** (205 English, 163 Spanish/Latin):
+### 🎵 Music (436 Songs Total)
 
-**English Songs:**
+**English Songs (278 songs):**
 - 1960s-1990s: Classic hits from The Beatles, Queen, Michael Jackson, Nirvana
 - 2000s-2020s: Modern anthems from Beyoncé, Ed Sheeran, The Weeknd, Billie Eilish  
 - 2010s party hits: Rihanna, Lady Gaga, Calvin Harris, Ariana Grande, Justin Bieber
 
-**Spanish/Latin Songs:**
+**Spanish/Latin Songs (158 songs):**
 - Heavy emphasis on reggaeton and Latin pop
 - Artists: Bad Bunny, Karol G, Ozuna, Rauw Alejandro, Maluma, ROSALÍA, Shakira
 - Spanish pop/rock: La Oreja de Van Gogh, Amaral, El Canto del Loco, Mecano, Héroes del Silencio
 - Focus on post-2000 music with 70+ songs from 2020s alone
 
-## 🎧 Audio Playback
+### 🎬 Movies & TV Shows (200 Items Total)
 
-- **Deezer API**: 367 songs (~99%) play ad-free 30-second previews via Deezer
-- **YouTube Fallback**: 1 song uses YouTube embed (may show ads)
+**English Movies/Shows (100 items):**
+- Classic films and iconic TV series from 1960s-2020s
+- Mix of blockbusters, critically acclaimed films, and popular TV shows
+
+**Spanish Movies/Shows (100 items from Spain):**
+- Spanish cinema and television from Spain specifically
+- Filtered by origin country to ensure authentic Spanish content
+
+## 🎧 Media Playback
+
+**For Songs:**
+- **Deezer API**: ~99% of songs play ad-free 30-second previews via Deezer
+- **YouTube Fallback**: Remaining songs use YouTube embed (may show ads)
 - Preview URLs are fetched dynamically at runtime for freshness
 - CORS proxy fallback chain ensures reliability
+
+**For Movies/TV Shows:**
+- **Backdrop Images**: Scene stills shown during guessing phase (harder to identify)
+- **Poster Images**: Official posters shown on reveal (clear identification)
+- Images fetched from TMDB API with permanent URLs
 
 ## 🚀 Getting Started
 
@@ -54,24 +71,84 @@ npm run dev
 - **Vite** - Build tool & dev server
 - **Firebase Realtime Database** - Multi-device sync
 - **Deezer API** - Ad-free audio previews (30 seconds)
+- **TMDB API** - Movie/TV show data and images
 - **YouTube Embeds** - Fallback audio playback
 - **CSS3** - Modern styling with theme system
 
+## 🎯 Content Sources
+
+### Songs
+- **Data structure**: Title, artist, year, YouTubeId, DeezerId
+- **Playback**: Deezer preview URLs (fetched at runtime, expire after 24h)
+- **Album covers**: Fetched at runtime from Deezer API
+- **Fallback**: YouTube embeds for songs without Deezer previews
+
+### Movies/TV Shows
+- **Data structure**: Title, year, backdropUrl, posterUrl, tmdbId, type
+- **Images**: TMDB permanent URLs (don't expire)
+- **Hint phase**: Backdrop images (scene stills)
+- **Reveal phase**: Poster images (official artwork)
+- **Origin filtering**: Spanish content filtered by Spain specifically
+
+## 🔧 Key Features
+
+### Color-Coded Timelines
+- Each player gets a unique shuffled color sequence (8 colors)
+- Colors assigned per-item, not per-position
+- Item colors remain stable even when timeline reorders
+- Uses seeded Fisher-Yates shuffle with Linear Congruential Generator (LCG)
+
+### Media-Agnostic Architecture
+- Generic terminology: "items" instead of "songs"
+- `category` field: 'songs' or 'movies'
+- `contentSet` field: 'everything', 'english', 'spanish', or 'new' (2010+)
+- Components work across all media types
+- Easy to extend with new categories in future
+
 ## 📝 Features
 
+- ✅ **Multiple categories**: Songs, Movies, and TV Shows
 - ✅ Turn-based gameplay for multiple players
 - ✅ **Single-device mode** (hot-seat multiplayer)
 - ✅ **Multi-device mode** (real-time sync via Firebase)
 - ✅ Configurable winning conditions
-- ✅ Hidden song playback (no spoilers!)
-- ✅ Play/Pause controls
-- ✅ Visual timeline display
+- ✅ **Content filtering**: Everything, English only, Spanish only, or Recent (2010+)
+- ✅ Hidden media (audio for songs, scene images for movies/shows)
+- ✅ Play/Pause controls for audio
+- ✅ Visual timeline display with color-coded cards
+- ✅ Per-item color stability (colors don't change between turns)
 - ✅ Immediate feedback on correct/incorrect placements
 - ✅ Winner announcement with full timeline
 - ✅ Modern dark/light theme UI
 - ✅ Bilingual support (English/Spanish)
 
 ## 🎨 Customization
+
+### Adding Movies/TV Shows from TMDB
+
+Use the automated script to fetch movies and TV shows:
+
+```bash
+python3 scripts/fetch-movies.py
+
+# For Spanish content (from Spain only):
+python3 scripts/fetch-movies.py --language es
+
+# Limit number of items:
+python3 scripts/fetch-movies.py --limit 50
+```
+
+**Requirements:**
+- TMDB API key (set as `TMDB_API_KEY` environment variable)
+- Both `backdrop_path` AND `poster_path` must be present
+- Spanish content filtered by origin country (Spain only)
+
+The script will:
+- ✅ Fetch movies and TV shows from TMDB `/discover` endpoints
+- ✅ Filter by origin country for Spanish content (`with_origin_country=ES`)
+- ✅ Include backdrop URLs (for hint phase) and poster URLs (for reveal phase)
+- ✅ Generate `src/data/movies/english.js` or `spanish.js`
+- ✅ Include title, year, backdrop, poster, TMDB ID, and type (movie/tvshow)
 
 ### Checking for Duplicates
 
@@ -132,17 +209,18 @@ python3 scripts/add-playlist.py PLAYLIST_ID --limit 50
 
 The script will:
 - ✅ Fetch all tracks from the playlist (titles and artists)
+- ✅ Clean titles by removing parentheses/brackets (done twice: before search and after receiving YouTube data)
 - ✅ Optionally process until N songs are successfully imported
 - ✅ Search for official YouTube video IDs (ensures best/canonical versions)
 - ✅ Get YouTube IDs, Deezer IDs, album covers, and years
 - ✅ Remove duplicates automatically
-- ✅ Append formatted songs to the correct data file
+- ✅ Append formatted songs to `src/data/songs/english.js` or `spanish.js`
 
 **Note:** When using `--limit 50`, the script keeps processing songs until 50 are successfully imported (skipping any that fail).
 
 ### Adding Individual Songs
 
-To add songs manually, edit `src/data/songs.js` and add entries **without any IDs**:
+To add songs manually, edit `src/data/songs/english.js` or `spanish.js` and add entries **without any IDs**:
 
 ```javascript
 {
@@ -155,13 +233,13 @@ To add songs manually, edit `src/data/songs.js` and add entries **without any ID
 Then run the automatic ID updater:
 
 ```bash
-python3 update-ids.py
+python3 scripts/update-ids.py
 ```
 
 The script will automatically:
 - ✅ Fetch YouTube IDs from YouTube Music API
 - ✅ Fetch Deezer IDs from Deezer API (for ad-free playback)
-- ✅ Update the songs.js file with both IDs
+- ✅ Update the data files with both IDs
 
 ### Manual ID Entry
 
@@ -172,8 +250,22 @@ You can also add songs with IDs directly:
   title: "Your Song Title",
   artist: "Artist Name",
   year: 2024,
-  youtubeId: "youtube_video_id",
-  deezerId: "deezer_track_id"
+  youtubeId: "youtube_video_id",  // Required
+  deezerId: "deezer_track_id"     // Required
+  // Note: Do NOT add albumCover or previewUrl - these are fetched at runtime
+}
+```
+
+For movies/TV shows:
+
+```javascript
+{
+  title: "Movie Title",
+  year: 2024,
+  backdropUrl: "https://image.tmdb.org/t/p/original/...",  // Scene image for hints
+  posterUrl: "https://image.tmdb.org/t/p/original/...",    // Poster for reveal
+  tmdbId: "12345",
+  type: "movie"  // or "tvshow"
 }
 ```
 
@@ -182,14 +274,29 @@ You can also add songs with IDs directly:
 ```
 src/
 ├── components/
-│   ├── GameSetup.jsx         # Player configuration
-│   ├── GameBoard.jsx         # Main game logic
-│   ├── Timeline.jsx          # Timeline display
-│   ├── SongPlayer.jsx        # Audio player
-│   └── PlacementButtons.jsx  # Placement controls
+│   ├── GameSetup.jsx            # Player & category configuration
+│   ├── GameBoard.jsx            # Main game logic (single-device)
+│   ├── MultiplayerGameBoard.jsx # Multiplayer wrapper (Firebase sync)
+│   ├── Timeline.jsx             # Timeline display (color-coded cards)
+│   ├── MediaPlayer.jsx          # Routes to SongPlayer or ImageHint
+│   ├── SongPlayer.jsx           # Audio player for songs
+│   ├── ImageHint.jsx            # Image display for movies/shows
+│   └── PlacementButtons.jsx     # Placement controls
 ├── data/
-│   └── songs.js              # Curated song library
-└── App.jsx                   # Root component
+│   ├── songs.js                 # Song sets export
+│   ├── songs/
+│   │   ├── english.js           # 278 English songs
+│   │   └── spanish.js           # 158 Spanish songs
+│   ├── movies.js                # Movie sets export
+│   └── movies/
+│       ├── english.js           # 100 English movies/shows
+│       └── spanish.js           # 100 Spanish movies/shows
+├── utils/
+│   └── deezer.js                # Deezer API with CORS proxy fallback
+├── services/
+│   └── gameSession.js           # Firebase operations
+├── translations.js              # English/Spanish translations
+└── App.jsx                      # Root component
 ```
 
 ## 🎯 No API Keys Required!

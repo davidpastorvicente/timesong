@@ -26,7 +26,7 @@
   gap: 0.5rem;
 }
 
-.song-card {
+.item-card {
   color: white;
   padding: 1rem;
   border-radius: 8px;
@@ -37,29 +37,29 @@
   min-width: 150px;
 }
 
-.song-card:hover {
+.item-card:hover {
   transform: translateY(-2px);
 }
 
-.song-info {
+.item-info {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
 }
 
-.song-title {
+.item-info .item-title {
   font-weight: bold;
   font-size: 1.2rem;
   text-align: end;
 }
 
-.song-artist {
+.item-info .item-subtitle {
   font-size: 0.85rem;
   opacity: 0.9;
   text-align: end;
 }
 
-.song-year {
+.item-info .item-year {
   font-size: 1.75rem;
   font-weight: bold;
   margin-top: 0.5rem;

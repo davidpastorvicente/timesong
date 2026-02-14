@@ -1,5 +1,5 @@
-import { englishSongs } from './english.js';
-import { spanishSongs } from './spanish.js';
+import { englishSongs } from './songs/english.js';
+import { spanishSongs } from './songs/spanish.js';
 
 // Combine all songs
 const allSongs = [...englishSongs, ...spanishSongs];
@@ -23,10 +23,3 @@ export const songSets = {
     songs: allSongs.filter(song => song.year >= 2010)
   }
 };
-
-export const songSetOptions = [
-  { id: 'everything', label: 'Everything' },
-  { id: 'english', label: 'English' },
-  { id: 'spanish', label: 'Spanish' },
-  { id: 'new', label: 'New Songs (2010+)' }
-];

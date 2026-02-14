@@ -4,35 +4,58 @@ import { generateGameCode, createGameSession, checkGameExists, joinGameSession, 
 import { useTheme } from '../hooks/useTheme';
 import './GameSetup.css';
 
-// Reusable component for song set selector
-function SongSetSelector({ songSet, setSongSet, t }) {
+// Reusable component for category selector
+function CategorySelector({ category, setCategory, t }) {
   return (
     <div className="form-group">
-      <label>{t.songSetLabel}</label>
+      <label>{t.categoryLabel}</label>
       <div className="player-selector">
         <button
-          className={songSet === 'everything' ? 'active' : ''}
-          onClick={() => setSongSet('everything')}
+          className={category === 'songs' ? 'active' : ''}
+          onClick={() => setCategory('songs')}
         >
-          {t.songSetEverything}
+          🎵 {t.categorySongs}
         </button>
         <button
-          className={songSet === 'english' ? 'active' : ''}
-          onClick={() => setSongSet('english')}
+          className={category === 'movies' ? 'active' : ''}
+          onClick={() => setCategory('movies')}
         >
-          {t.songSetEnglish}
+          🎬 {t.categoryMovies}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Reusable component for content set selector
+function ContentSetSelector({ contentSet, setContentSet, t }) {
+  return (
+    <div className="form-group">
+      <label>{t.contentSetLabel}</label>
+      <div className="player-selector">
+        <button
+          className={contentSet === 'everything' ? 'active' : ''}
+          onClick={() => setContentSet('everything')}
+        >
+          {t.contentSetEverything}
         </button>
         <button
-          className={songSet === 'spanish' ? 'active' : ''}
-          onClick={() => setSongSet('spanish')}
+          className={contentSet === 'english' ? 'active' : ''}
+          onClick={() => setContentSet('english')}
         >
-          {t.songSetSpanish}
+          {t.contentSetEnglish}
         </button>
         <button
-          className={songSet === 'new' ? 'active' : ''}
-          onClick={() => setSongSet('new')}
+          className={contentSet === 'spanish' ? 'active' : ''}
+          onClick={() => setContentSet('spanish')}
         >
-          {t.songSetNew}
+          {t.contentSetSpanish}
+        </button>
+        <button
+          className={contentSet === 'new' ? 'active' : ''}
+          onClick={() => setContentSet('new')}
+        >
+          {t.contentSetNew}
         </button>
       </div>
     </div>
@@ -75,10 +98,11 @@ export default function GameSetup({ onStartGame, language }) {
   const [copied, setCopied] = useState(false);
   const [connectedPlayers, setConnectedPlayers] = useState([]);
   
+  const [category, setCategory] = useState('songs');
   const [numPlayers, setNumPlayers] = useState(2);
   const [playerNames, setPlayerNames] = useState([`${t.player} 1`, `${t.player} 2`]);
   const [winningScore, setWinningScore] = useState(10);
-  const [songSet, setSongSet] = useState('everything');
+  const [contentSet, setContentSet] = useState('everything');
 
   const handleNumPlayersChange = (num) => {
     setNumPlayers(num);
@@ -113,9 +137,10 @@ export default function GameSetup({ onStartGame, language }) {
   const handleStart = () => {
     onStartGame({
       mode: 'single',
+      category,
       playerNames,
       winningScore,
-      songSet
+      contentSet
     });
   };
 
@@ -139,9 +164,10 @@ export default function GameSetup({ onStartGame, language }) {
       
       // Initialize with host settings
       const gameSettings = {
+        category,
         playerNames: [], // Players join dynamically
         winningScore,
-        songSet
+        contentSet
       };
       
       await createGameSession(code, gameSettings);
@@ -199,9 +225,10 @@ export default function GameSetup({ onStartGame, language }) {
           const finalPlayerNames = gameData.players.map(t => t.name);
           onStartGame({
             mode: 'multi',
+            category: gameData.settings.category,
             playerNames: finalPlayerNames,
             winningScore: gameData.settings.winningScore,
-            songSet: gameData.settings.songSet,
+            contentSet: gameData.settings.contentSet,
             gameCode: code,
             myPlayerIndex: playerIndex,
             deviceId,
@@ -227,9 +254,10 @@ export default function GameSetup({ onStartGame, language }) {
     // Just start the game
     onStartGame({
       mode: 'multi',
+      category,
       playerNames: connectedPlayers.map(t => t.name),
       winningScore,
-      songSet,
+      contentSet,
       gameCode,
       myPlayerIndex: 0, // Host is Player 1 (index 0)
       deviceId,
@@ -284,6 +312,8 @@ export default function GameSetup({ onStartGame, language }) {
           {/* Single Device Setup */}
           {gameMode === 'single' && (
             <>
+              <CategorySelector category={category} setCategory={setCategory} t={t} />
+              
               <div className="form-group">
                 <label>{t.playersNumber}</label>
                 <div className="player-selector">
@@ -315,7 +345,7 @@ export default function GameSetup({ onStartGame, language }) {
 
               <WinningScoreSelector winningScore={winningScore} setWinningScore={setWinningScore} t={t} />
 
-              <SongSetSelector songSet={songSet} setSongSet={setSongSet} t={t} />
+              <ContentSetSelector contentSet={contentSet} setContentSet={setContentSet} t={t} />
 
               <button className="start-button" onClick={handleStart}>
                 {t.startGameButton}
@@ -347,6 +377,8 @@ export default function GameSetup({ onStartGame, language }) {
           {/* Host Configuration */}
           {gameMode === 'multi' && multiplayerMode === 'config' && (
             <>
+              <CategorySelector category={category} setCategory={setCategory} t={t} />
+              
               <div className="form-group">
                 <label>{t.playerNameLabel}</label>
                 <input
@@ -360,7 +392,7 @@ export default function GameSetup({ onStartGame, language }) {
 
               <WinningScoreSelector winningScore={winningScore} setWinningScore={setWinningScore} t={t} />
 
-              <SongSetSelector songSet={songSet} setSongSet={setSongSet} t={t} />
+              <ContentSetSelector contentSet={contentSet} setContentSet={setContentSet} t={t} />
 
               {error && <p className="error">{error}</p>}
 

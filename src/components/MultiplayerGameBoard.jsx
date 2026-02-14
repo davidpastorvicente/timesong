@@ -1,13 +1,14 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { subscribeToGame, updateGameState, updatePlayerData, setHostDevice } from '../services/gameSession';
 import { songSets } from '../data/songs';
+import { movieSets } from '../data/movies';
 import { translations } from '../translations';
 import { fetchDeezerPreview } from '../utils/deezer';
 import GameBoard from './GameBoard';
 import './MultiplayerGameBoard.css';
 
 export default function MultiplayerGameBoard({ gameConfig, language, onTurnIndicatorChange }) {
-  const { mode, gameCode, myPlayerIndex, deviceId, isHost } = gameConfig;
+  const { mode, gameCode, myPlayerIndex, deviceId, isHost, category } = gameConfig;
   const [gameData, setGameData] = useState(null);
   const [isMyTurn, setIsMyTurn] = useState(false);
   const initializingRef = useRef(false);
@@ -17,22 +18,35 @@ export default function MultiplayerGameBoard({ gameConfig, language, onTurnIndic
     if (!isHost || initializingRef.current || !gameCode) return;
     initializingRef.current = true;
     
-    const { songSet } = gameConfig;
-    const selectedSongs = songSets[songSet]?.songs || songSets.everything.songs;
+    const { contentSet, category } = gameConfig;
+    let selectedMedia;
     
-    // Draw first song
-    const randomIndex = Math.floor(Math.random() * selectedSongs.length);
-    const song = selectedSongs[randomIndex];
+    if (category === 'songs') {
+      selectedMedia = songSets[contentSet]?.songs || songSets.everything.songs;
+    } else if (category === 'movies') {
+      selectedMedia = movieSets[contentSet]?.movies || movieSets.everything.movies;
+    }
     
-    // Fetch Deezer preview URL at runtime (they expire after ~24h)
-    const { previewUrl, albumCover } = await fetchDeezerPreview(song);
-    const firstSong = { ...song, previewUrl, albumCover };
+    // Draw first item
+    const randomIndex = Math.floor(Math.random() * selectedMedia.length);
+    const item = selectedMedia[randomIndex];
+    
+    let firstItem;
+    if (category === 'songs') {
+      // Fetch Deezer preview URL at runtime (they expire after ~24h)
+      const { previewUrl, albumCover } = await fetchDeezerPreview(item);
+      firstItem = { ...item, previewUrl, albumCover };
+    } else {
+      firstItem = item;
+    }
 
+    const idField = category === 'songs' ? 'youtubeId' : 'tmdbId';
+    
     // Initialize game state in Firebase
     await updateGameState(gameCode, {
       gamePhase: 'playing',
-      currentSong: firstSong,
-      usedSongIds: [song.youtubeId],
+      currentItem: firstItem,
+      usedItemIds: [item[idField]],
       currentPlayerIndex: 0
     });
 
@@ -74,7 +88,7 @@ export default function MultiplayerGameBoard({ gameConfig, language, onTurnIndic
       return;
     }
 
-    if (!gameData || !gameData.state.currentSong) {
+    if (!gameData || !gameData.state.currentItem) {
       if (onTurnIndicatorChange) onTurnIndicatorChange(null);
       return;
     }
@@ -105,10 +119,11 @@ export default function MultiplayerGameBoard({ gameConfig, language, onTurnIndic
   }
 
   // Multiplayer mode - show waiting or playing based on turn
-  if (!gameData || !gameData.state.currentSong) {
+  if (!gameData || !gameData.state.currentItem) {
+    const t = translations[language];
     return (
       <div style={{ padding: '4rem', textAlign: 'center', color: 'var(--text-primary)' }}>
-        <h2>⏳ {isHost ? 'Preparing first song...' : 'Waiting for host to start...'}</h2>
+        <h2>⏳ {isHost ? t.preparingFirstItem : t.waitingForHost}</h2>
       </div>
     );
   }
@@ -119,13 +134,13 @@ export default function MultiplayerGameBoard({ gameConfig, language, onTurnIndic
       gameConfig={gameConfig}
       gameData={gameData}
       language={language}
-      onPlaceSong={handlePlaceSong}
+      onPlaceItem={handlePlaceItem}
       onNextTurn={handleNextTurn}
       isMyTurn={isMyTurn}
     />
   );
 
-  async function handlePlaceSong(timeline, score, isCorrect, position) {
+  async function handlePlaceItem(timeline, score, isCorrect, position) {
     // Update player data in Firebase
     await updatePlayerData(gameCode, myPlayerIndex, {
       timeline: timeline,
@@ -140,7 +155,7 @@ export default function MultiplayerGameBoard({ gameConfig, language, onTurnIndic
         lastPlacement: { 
           correct: isCorrect, 
           playerIndex: myPlayerIndex,
-          song: gameData.state.currentSong,
+          item: gameData.state.currentItem,
           position: position
         },
         gamePhase: 'gameOver',
@@ -152,7 +167,7 @@ export default function MultiplayerGameBoard({ gameConfig, language, onTurnIndic
         lastPlacement: { 
           correct: isCorrect, 
           playerIndex: myPlayerIndex,
-          song: gameData.state.currentSong,
+          item: gameData.state.currentItem,
           position: position
         },
         gamePhase: 'result'
@@ -160,10 +175,10 @@ export default function MultiplayerGameBoard({ gameConfig, language, onTurnIndic
     }
   }
 
-  async function handleNextTurn(nextSong) {
+  async function handleNextTurn(nextItem) {
     const nextPlayerIndex = (gameData.state.currentPlayerIndex + 1) % gameData.players.length;
     
-    // Set loading phase first before changing turn/song
+    // Set loading phase first before changing turn/item
     await updateGameState(gameCode, {
       gamePhase: 'loading'
     });
@@ -171,23 +186,25 @@ export default function MultiplayerGameBoard({ gameConfig, language, onTurnIndic
     // Small delay to ensure all clients see loading state
     await new Promise(resolve => setTimeout(resolve, 100));
     
+    const idField = category === 'songs' ? 'youtubeId' : 'tmdbId';
+    
     await updateGameState(gameCode, {
       currentPlayerIndex: nextPlayerIndex,
-      currentSong: nextSong,
-      usedSongIds: [...gameData.state.usedSongIds, nextSong.youtubeId],
+      currentItem: nextItem,
+      usedItemIds: [...gameData.state.usedItemIds, nextItem[idField]],
       gamePhase: 'playing'
     });
   }
 }
 
 // Component that handles the active turn gameplay
-function MultiplayerGameBoardActive({ gameConfig, gameData, language, onPlaceSong, onNextTurn, isMyTurn }) {
-  const { songSet, winningScore, myPlayerIndex } = gameConfig;
+function MultiplayerGameBoardActive({ gameConfig, gameData, language, onPlaceItem, onNextTurn, isMyTurn }) {
+  const { contentSet, category, winningScore, myPlayerIndex } = gameConfig;
   // Use gamePhase from Firebase instead of local state so all players see the same phase
   const gamePhase = gameData.state.gamePhase || 'playing';
   const lastPlacement = gameData.state.lastPlacement || null;
 
-  const currentSong = gameData.state.currentSong;
+  const currentItem = gameData.state.currentItem;
   const myPlayer = gameData.players[myPlayerIndex] || {};
   const myTimeline = myPlayer.timeline || [];
   const myScore = myPlayer.score || 0;
@@ -195,15 +212,15 @@ function MultiplayerGameBoardActive({ gameConfig, gameData, language, onPlaceSon
   const handlePlacement = async (position) => {
     if (!isMyTurn) return; // Prevent placement if not my turn
     const newTimeline = [...myTimeline];
-    newTimeline.splice(position, 0, currentSong);
+    newTimeline.splice(position, 0, currentItem);
 
     const isCorrect = checkIfCorrectPlacement(newTimeline);
     const newScore = isCorrect ? myScore + 1 : myScore;
 
     if (isCorrect) {
-      await onPlaceSong(newTimeline, newScore, true, position);
+      await onPlaceItem(newTimeline, newScore, true, position);
     } else {
-      await onPlaceSong(myTimeline, myScore, false, position);
+      await onPlaceItem(myTimeline, myScore, false, position);
     }
   };
 
@@ -219,10 +236,17 @@ function MultiplayerGameBoardActive({ gameConfig, gameData, language, onPlaceSon
   const handleNextTurn = async () => {
     if (!isMyTurn) return; // Prevent turn advance if not my turn
     
-    // Draw new song
-    const selectedSongs = songSets[songSet]?.songs || songSets.everything.songs;
-    const availableToPlay = selectedSongs.filter(song => 
-      !gameData.state.usedSongIds.includes(song.youtubeId)
+    // Draw new item
+    let selectedMedia;
+    if (category === 'songs') {
+      selectedMedia = songSets[contentSet]?.songs || songSets.everything.songs;
+    } else if (category === 'movies') {
+      selectedMedia = movieSets[contentSet]?.movies || movieSets.everything.movies;
+    }
+    
+    const idField = category === 'songs' ? 'youtubeId' : 'tmdbId';
+    const availableToPlay = selectedMedia.filter(item => 
+      !gameData.state.usedItemIds.includes(item[idField])
     );
 
     if (availableToPlay.length === 0) {
@@ -231,13 +255,18 @@ function MultiplayerGameBoardActive({ gameConfig, gameData, language, onPlaceSon
     }
 
     const randomIndex = Math.floor(Math.random() * availableToPlay.length);
-    const song = availableToPlay[randomIndex];
+    const item = availableToPlay[randomIndex];
 
-    // Fetch Deezer preview URL at runtime (they expire after ~24h)
-    const { previewUrl, albumCover } = await fetchDeezerPreview(song);
+    let nextItem;
+    if (category === 'songs') {
+      // Fetch Deezer preview URL at runtime (they expire after ~24h)
+      const { previewUrl, albumCover } = await fetchDeezerPreview(item);
+      nextItem = { ...item, previewUrl, albumCover };
+    } else {
+      nextItem = item;
+    }
 
-    const nextSong = { ...song, previewUrl, albumCover };
-    await onNextTurn(nextSong);
+    await onNextTurn(nextItem);
     // No need to set local state - Firebase handles gamePhase and lastPlacement
   };
 
@@ -247,15 +276,16 @@ function MultiplayerGameBoardActive({ gameConfig, gameData, language, onPlaceSon
     <GameBoard 
       gameConfig={{
         mode: 'multi', // Pass multi mode to prevent reordering
+        category,
         playerNames: gameData.players.map(t => t.name),
         winningScore,
-        songSet,
+        contentSet,
         myPlayerIndex // Pass myPlayerIndex to keep my player on top
       }}
       language={language}
       // Override internal state with Firebase data
       overrideState={{
-        currentSong,
+        currentItem,
         currentPlayerIndex: myPlayerIndex, // This is for my current position
         actualCurrentPlayerIndex: gameData.state.currentPlayerIndex, // This is the actual active player
         playerTimelines: gameData.players.map(t => t.timeline || []),

@@ -9,12 +9,15 @@ export const translations = {
     
     // Game Setup
     setupTitle: "ChronoTunes",
-    setupSubtitle: "Build timelines by placing songs in chronological order!",
+    setupSubtitle: "Build timelines by placing items in chronological order!",
+    categoryLabel: "Category",
+    categorySongs: "Songs",
+    categoryMovies: "Movies & TV Shows",
     playersNumber: "Number of players",
     playerNames: "Player names",
     player: "Player",
     winningScoreLabel: "Winning score",
-    songSetLabel: "Song set",
+    contentSetLabel: "Content set",
     startGameButton: "Start game",
     
     // Multiplayer
@@ -31,24 +34,27 @@ export const translations = {
     gameCodePlaceholder: "Enter 6-digit code",
     waitingForPlayers: "Waiting for players to join...",
     waitingForHost: "Waiting for host to start...",
+    preparingFirstItem: "Preparing first item...",
     copyGameCode: "Copy game code",
     codeCopied: "Code copied!",
     invalidGameCode: "Invalid game code",
     gameNotFound: "Game not found",
     yourTurn: "Your turn!",
     
-    // Song Sets
-    songSetEverything: "Everything",
-    songSetEnglish: "English",
-    songSetSpanish: "Spanish",
-    songSetNew: "Recent (2010+)",
+    // Content Sets
+    contentSetEverything: "Everything",
+    contentSetEnglish: "English",
+    contentSetSpanish: "Spanish",
+    contentSetNew: "Recent (2010+)",
     
     // Game Board
     timeline: "Timeline",
     score: "Score",
+    movie: "Movie",
+    tvShow: "TV Show",
     
     // Song Player
-    loadingNextSong: "Loading next song...",
+    loading: "Loading...",
     playSong: "Play",
     playing: "Playing...",
     paused: "Paused",
@@ -63,7 +69,7 @@ export const translations = {
     after: "After",
     
     // Timeline
-    noSongs: "No songs yet. Start building your timeline!",
+    noItems: "No items yet. Start building your timeline!",
     
     // Results
     nextTurn: "Next turn",
@@ -84,12 +90,15 @@ export const translations = {
     
     // Game Setup
     setupTitle: "ChronoTunes",
-    setupSubtitle: "¡Construye cronologías colocando canciones en orden cronológico!",
+    setupSubtitle: "¡Construye cronologías colocando elementos en orden cronológico!",
+    categoryLabel: "Categoría",
+    categorySongs: "Canciones",
+    categoryMovies: "Películas y series",
     playersNumber: "Número de jugadores",
     playerNames: "Nombres de los jugadores",
     player: "Jugador",
     winningScoreLabel: "Puntuación para ganar",
-    songSetLabel: "Tipo de canciones",
+    contentSetLabel: "Tipo de contenido",
     startGameButton: "Empezar",
     
     // Multiplayer
@@ -106,24 +115,27 @@ export const translations = {
     gameCodePlaceholder: "Ingresa código de 6 dígitos",
     waitingForPlayers: "Esperando jugadores...",
     waitingForHost: "Esperando que el anfitrión inicie...",
+    preparingFirstItem: "Preparando primer elemento...",
     copyGameCode: "Copiar código",
     codeCopied: "¡Código copiado!",
     invalidGameCode: "Código inválido",
     gameNotFound: "Juego no encontrado",
     yourTurn: "¡Tu turno!",
     
-    // Song Sets
-    songSetEverything: "Todas",
-    songSetEnglish: "Inglés",
-    songSetSpanish: "Español",
-    songSetNew: "Nuevas (2010+)",
+    // Content Sets
+    contentSetEverything: "Todas",
+    contentSetEnglish: "Inglés",
+    contentSetSpanish: "Español",
+    contentSetNew: "Nuevas (2010+)",
     
     // Game Board
     timeline: "Cronología",
     score: "Puntuación",
+    movie: "Película",
+    tvShow: "Serie",
     
     // Song Player
-    loadingNextSong: "Cargando la siguiente canción...",
+    loading: "Cargando...",
     playSong: "Reproducir",
     playing: "Reproduciendo...",
     paused: "Pausado",
@@ -131,14 +143,14 @@ export const translations = {
     pause: "Pausar",
     
     // Placement Buttons
-    placementInstruction: "¿Dónde pertenece esta canción en tu cronología?",
+    placementInstruction: "¿Dónde pertenece este elemento en tu cronología?",
     placeAsFirst: "Colocar primera",
     before: "Antes de",
     between: "Entre",
     after: "Después de",
     
     // Timeline
-    noSongs: "Aún no hay canciones. ¡Empieza a construir tu cronología!",
+    noItems: "Aún no hay canciones. ¡Empieza a construir tu cronología!",
     
     // Results
     nextTurn: "Siguiente turno",

@@ -1,7 +1,7 @@
 import { translations } from '../translations';
 import './Timeline.css';
 
-// Array of color options for song cards
+// Array of color options for timeline cards
 const CARD_COLORS = [
   { start: 'var(--primary)', end: 'var(--primary-dark)' },
   { start: 'var(--success)', end: 'var(--success-dark)' },
@@ -49,43 +49,44 @@ function getPlayerColorPool(playerId) {
   return playerColorPools.get(playerId);
 }
 
-// Store color assignments per player per song
-const playerSongColors = new Map(); // Map<playerId, Map<songKey, color>>
+// Store color assignments per player per item
+const playerItemColors = new Map(); // Map<playerId, Map<itemKey, color>>
 
-// Get or assign a color for a specific song in a player's timeline
-function getColorForPlayerSong(playerId, song) {
-  const songKey = `${song.title}|${song.artist}`; // Unique identifier for the song
+// Get or assign a color for a specific item in a player's timeline
+function getColorForPlayerItem(playerId, item) {
+  // Create unique identifier using title and year (works for both songs and movies)
+  const itemKey = `${item.title}|${item.year}`;
   
-  if (!playerSongColors.has(playerId)) {
-    playerSongColors.set(playerId, new Map());
+  if (!playerItemColors.has(playerId)) {
+    playerItemColors.set(playerId, new Map());
   }
   
-  const playerColors = playerSongColors.get(playerId);
+  const playerColors = playerItemColors.get(playerId);
   
-  if (!playerColors.has(songKey)) {
+  if (!playerColors.has(itemKey)) {
     // Get player's color pool
     const colorPool = getPlayerColorPool(playerId);
     
-    // Assign next available color (based on current number of songs)
+    // Assign next available color (based on current number of items)
     const colorIndex = playerColors.size % colorPool.length;
-    playerColors.set(songKey, colorPool[colorIndex]);
+    playerColors.set(itemKey, colorPool[colorIndex]);
   }
   
-  return playerColors.get(songKey);
+  return playerColors.get(itemKey);
 }
 
-export default function Timeline({ timeline = [], showYears, language, playerId = 0 }) {
+export default function Timeline({ timeline = [], language, playerId = 0, category}) {
   const t = translations[language];
 
   if (!timeline || timeline.length === 0) {
     return (
       <div className="timeline empty">
-        <p>{t.noSongs}</p>
+        <p>{t.noItems}</p>
       </div>
     );
   }
 
-  // Group songs by year
+  // Group items by year
   const groupedByYear = [];
   let currentGroup = [timeline[0]];
   
@@ -104,20 +105,27 @@ export default function Timeline({ timeline = [], showYears, language, playerId 
       {groupedByYear.map((group, groupIndex) => (
         <div key={groupIndex} className="timeline-year-group">
           <div className="year-group-container">
-            {group.map((song, songIndex) => {
-              const colors = getColorForPlayerSong(playerId, song);
+            {group.map((item, itemIndex) => {
+              const colors = getColorForPlayerItem(playerId, item);
               return (
                 <div 
-                  key={songIndex} 
-                  className="song-card"
+                  key={itemIndex} 
+                  className="item-card"
                   style={{
                     background: `linear-gradient(135deg, ${colors.start} 0%, ${colors.end} 100%)`
                   }}
                 >
-                  <div className="song-info">
-                    <div className="song-title">{song.title}</div>
-                    <div className="song-artist">{song.artist}</div>
-                    {showYears && <div className="song-year">{song.year}</div>}
+                  <div className="item-info">
+                    <div className="item-title">{item.title}</div>
+                    {category === 'songs' && item.artist && (
+                      <div className="item-subtitle">{item.artist}</div>
+                    )}
+                    {category === 'movies' && item.type && (
+                      <div className="item-subtitle">
+                        {item.type === 'movie' ? t.movie : t.tvShow}
+                      </div>
+                    )}
+                    <div className="item-year">{item.year}</div>
                   </div>
                 </div>
               );
