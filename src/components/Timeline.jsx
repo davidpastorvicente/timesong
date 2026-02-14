@@ -13,18 +13,68 @@ const CARD_COLORS = [
   { start: 'var(--teal)', end: 'var(--teal-dark)' },
 ];
 
-// Function to get a consistent random color based on song title
-function getColorForSong(title) {
-  // Use song title as seed for consistent color assignment
-  let hash = 0;
-  for (let i = 0; i < title.length; i++) {
-    hash = title.charCodeAt(i) + ((hash << 5) - hash);
+// Seeded Fisher-Yates shuffle algorithm
+function seededShuffle(array, seed) {
+  const shuffled = [...array];
+  let currentSeed = seed;
+  
+  // Simple LCG (Linear Congruential Generator) for deterministic randomness
+  const random = () => {
+    currentSeed = (currentSeed * 1664525 + 1013904223) % 4294967296;
+    return currentSeed / 4294967296;
+  };
+  
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
-  const index = Math.abs(hash) % CARD_COLORS.length;
-  return CARD_COLORS[index];
+  return shuffled;
 }
 
-export default function Timeline({ timeline = [], showYears, language }) {
+// Store color pools per player - keyed by playerId
+const playerColorPools = new Map();
+
+// Generate a unique color pool for each player
+function getPlayerColorPool(playerId) {
+  if (!playerColorPools.has(playerId)) {
+    // Use playerId as seed for deterministic but unique shuffling
+    const pool = [];
+    let seed = playerId + 1; // Add 1 to avoid seed=0
+    for (let i = 0; i < 100; i += CARD_COLORS.length) {
+      pool.push(...seededShuffle(CARD_COLORS, seed));
+      seed += 12345; // Change seed for next batch
+    }
+    playerColorPools.set(playerId, pool);
+  }
+  return playerColorPools.get(playerId);
+}
+
+// Store color assignments per player per song
+const playerSongColors = new Map(); // Map<playerId, Map<songKey, color>>
+
+// Get or assign a color for a specific song in a player's timeline
+function getColorForPlayerSong(playerId, song) {
+  const songKey = `${song.title}|${song.artist}`; // Unique identifier for the song
+  
+  if (!playerSongColors.has(playerId)) {
+    playerSongColors.set(playerId, new Map());
+  }
+  
+  const playerColors = playerSongColors.get(playerId);
+  
+  if (!playerColors.has(songKey)) {
+    // Get player's color pool
+    const colorPool = getPlayerColorPool(playerId);
+    
+    // Assign next available color (based on current number of songs)
+    const colorIndex = playerColors.size % colorPool.length;
+    playerColors.set(songKey, colorPool[colorIndex]);
+  }
+  
+  return playerColors.get(songKey);
+}
+
+export default function Timeline({ timeline = [], showYears, language, playerId = 0 }) {
   const t = translations[language];
 
   if (!timeline || timeline.length === 0) {
@@ -55,7 +105,7 @@ export default function Timeline({ timeline = [], showYears, language }) {
         <div key={groupIndex} className="timeline-year-group">
           <div className="year-group-container">
             {group.map((song, songIndex) => {
-              const colors = getColorForSong(song.title);
+              const colors = getColorForPlayerSong(playerId, song);
               return (
                 <div 
                   key={songIndex} 
